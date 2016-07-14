@@ -1,17 +1,19 @@
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
 		// AMD. Register as an anonymous module.
-		define(['exports', 'moment'], function (exports, moment) {
-			factory((root.commonJsStrictGlobal = exports), moment);
+		define(['moment'], function (moment) {
+			return (root.returnExportsGlobal = factory(moment));
 		});
-	} else if (typeof exports === 'object' && typeof exports.nodeName !== 'string') {
-		// CommonJS
-		factory(exports, require('moment'));
+	} else if (typeof module === 'object' && module.exports) {
+		// Node. Does not work with strict CommonJS, but
+		// only CommonJS-like environments that support module.exports,
+		// like Node.
+		module.exports = factory(require('moment'));
 	} else {
 		// Browser globals
-		factory((root.commonJsStrictGlobal = {}), root.moment);
+		root.returnExportsGlobal = factory(root.moment);
 	}
-}(this, function (exports, moment) {
+}(this, function (moment) {
 
 	moment.createFromInputFallback = function(config) {
 		var date = attemptToParse(config._i);
@@ -107,7 +109,7 @@
 
 	var parsers = [];
 
-	var smartParse = {
+	var parseplus = {
 		addParser: function (spec) {
 			parsers.push(spec);
 			return this;
@@ -126,7 +128,7 @@
 			return this;
 		}
 	};
-	smartParse
+	parseplus
 		// 24 hour time
 		.addParser({
 			name: '24h',
@@ -175,13 +177,13 @@
 		})
 		// date such as "3-15-2010"
 		.addParser({
-			name: 'US',
+			name: 'us',
 			matcher: compile("^(_MONTH_)([\\/-])(_DAY_)\\2(_YEAR_)$"),
 			replacer: '$1/$3/$4',
 		})
 		// date such as "15.03.2010"
 		.addParser({
-			name: 'World',
+			name: 'world',
 			matcher: compile("^(_DAY_)([\\/\\.])(_MONTH_)\\2(_YEAR_)$"),
 			replacer: '$3/$1/$4',
 		})
@@ -213,7 +215,7 @@
 		})
 	;
 
-	exports.smartParse = smartParse;
+	return parseplus;
 
 }));
 //
