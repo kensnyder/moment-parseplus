@@ -16,7 +16,7 @@
 }(this, function (moment) {
 
 	moment.createFromInputFallback = function(config) {
-		var date = attemptToParse(config._i);
+		var date = parseplus.attemptToParse(config._i);
 		if (date instanceof Date) {
 			config._d = date;
 		}
@@ -34,62 +34,85 @@
 			var result = locale.call(moment, names, object);
 			var newName = locale.call(moment);
 			if (currName != newName) {
-				updateMatchers();
+				parseplus.updateMatchers();
 			}
 			return result;
 		};
 	})(moment.locale);
 
-	var attemptToParse = function(input) {
+	var parseplus = {};
+
+	parseplus.attemptToParse = function(input) {
 		var match;
 		var parser;
 		var i = 0;
-		var ms;
 		var obj;
-		while ((parser = parsers[i++])) {
+		var mo;
+		while ((parser = parseplus.parsers[i++])) {
 			if (!(match = input.match(parser.matcher))) {
 				continue;
 			}
 			if (parser.handler) {
 				obj = parser.handler(match, input);
-				if (obj) {
+				if (obj instanceof moment && obj.isValid()) {
+					return obj.toDate();
+				}
+				else if (obj instanceof Date) {
 					return obj;
 				}
+				else if (obj.input && obj.format) {
+					mo = parseplus.attemptFormat(obj.input, obj.format);
+					if (mo.isValid()) {
+						return mo.toDate();
+					}
+				}
 			}
-			else if (parser.replacer) {
-				ms = Date.parse(input.replace(parser.matcher, parser.replacer));
-				if (!isNaN(ms)) {
-					return new Date(ms);
+			else if (parser.format) {
+				mo = parseplus.attemptFormat(match.slice(1), parser.format);
+				if (mo.isValid()) {
+					return mo.toDate();
 				}
 			}
 		}
 	};
 
-	var zeroPad = function(number, places) {
+	parseplus.attemptFormat = function(match, format) {
+		var formatArr = [];
+		var dateStrs = [];
+		format.split(' ').forEach(function(f, idx) {
+			if (f != '*' && match[idx] !== '') {
+				dateStrs.push(match[idx]);
+				formatArr.push(f);
+			}
+		});
+		return moment(dateStrs.join('|'), formatArr.join('|'));
+	};
+
+	parseplus.zeroPad = function(number, places) {
 
 	};
 
-	var compile = function(code) {
+	parseplus.compile = function(code) {
 		code = code.replace(/_([A-Z][A-Z0-9]+)_/g, function($0, $1) {
-			return regexes[$1];
+			return parseplus.regexes[$1];
 		});
 		var matcher = new RegExp(code, 'i');
-		matcher.rawSource = code;
+		matcher.parseTpl = code;
 		return matcher;
 	};
 
-	var updateMatchers = function() {
+	parseplus.updateMatchers = function() {
 		regexes.MONTHNAME = moment.months().join('|') + '|' + moment.monthsShort().join('|');
 		regexes.DAYNAME = moment.weekdays().join('|') + '|' + moment.weekdaysShort().join('|');
-		// regexes.AMPM = somehow get meridiemParse...
+		regexes.AMPM = moment.localeData().meridiemParse.source;
 		parsers.forEach(function(parser) {
-			if (parser.matcher.rawSource) {
-				parser.matcher = compile(parser.matcher.rawSource);
+			if (parser.matcher.parseTpl) {
+				parser.matcher = compile(parser.matcher.parseTpl);
 			}
 		});
 	};
 
-	var regexes = {
+	parseplus.regexes = {
 		YEAR: "[1-9]\\d{3}",
 		MONTH: "1[0-2]|0?[1-9]",
 		MONTH2: "1[0-2]|0[1-9]",
@@ -107,65 +130,88 @@
 		UNIT: "year|month|week|day|hour|minute|second|millisecond"
 	};
 
-	var parsers = [];
+	parseplus.parsers = [];
 
-	var parseplus = {
-		addParser: function (spec) {
-			parsers.push(spec);
-			return this;
-		},
-		removeParser: function (name) {
-			parsers.some(function(parser, i) {
-				if (parser.name == name) {
-					parsers.splice(i, 1);
-					return true;
-				}
-			});
-			return this;
-		},
-		clearParsers: function () {
-			parsers = [];
-			return this;
-		}
+	parseplus.addParser = function (spec) {
+		parseplus.parsers.push(spec);
+		return this;
 	};
+
+	parseplus.removeParser = function (name) {
+		parseplus.parsers.some(function(parser, i) {
+			if (parser.name == name) {
+				parseplus.parsers.splice(i, 1);
+				return true;
+			}
+		});
+		return this;
+	};
+
+	parseplus.clearParsers = function () {
+		parseplus.parsers = [];
+		return this;
+	};
+
 	parseplus
 		// 24 hour time
 		.addParser({
 			name: '24h',
-			matcher: compile("^(?:(.+?)(?: |T))?(_H24_)\\:(_MIN_)(?:\\:(_SEC_)(?:\\.(_MS_))?)? ?(?:GMT)?(_TIMEZONE_)?(?: \\([A-Z]+\\))?$"),
+			//                               $1            $2        $3           $4           $5                  $6
+			matcher: parseplus.compile("^(?:(.+?)(?: |T))?(_H24_)\\:(_MIN_)(?:\\:(_SEC_)(?:\\.(_MS_))?)? ?(?:GMT)?(_TIMEZONE_)?(?: \\([A-Z]+\\))?$"),
 			handler: function(match) {
-				var d;
+				var date, mo;
 				if (match[1]) {
-					d = Date.create(match[1]);
-					if (isNaN(d)) {
-						return false;
+					date = parseplus.attemptToParse(match[1]);
+					if (date) {
+						mo = moment(date);
 					}
-				} else {
-					d = Date.current();
-					d.setMilliseconds(0);
+					else {
+						return;
+					}
 				}
-				d.setHours(parseFloat(match[2]), parseFloat(match[3]), parseFloat(match[4] || 0));
-				if (match[5]) {
-					d.setMilliseconds(+String(match[5]).slice(0,3));
+				else {
+					// today plus the given time
+					mo = moment();
 				}
-				if (match[6]) {
-					d.setUTCOffsetString(match[6]);
-				}
-				return d;
+				return {
+					input: [mo.year(), mo.month()+1, mo.date()].concat(match.slice(2)),
+					format: 'YYYY MM DD hh mm ss SSS ZZ'
+				};
 			}
 		})
 		// 12-hour time
 		.addParser({
 			name: '12h',
-			matcher: compile("^(?:(.+) )?(_H12_)(?:\\:(_MIN_)(?:\\:(_SEC_))?)? ?(_AMPM_)$"),
-			handler: function (match) {
+			matcher: parseplus.compile("^(?:(.+) )?(_H12_)(?:\\:(_MIN_)(?:\\:(_SEC_))?)? ?(_AMPM_)$"),
+			handler: function(match) {
+				var date, mo;
+				if (match[1]) {
+					date = parseplus.attemptToParse(match[1]);
+					if (date) {
+						mo = moment(date);
+					}
+					else {
+						return;
+					}
+				}
+				else {
+					// today plus the given time
+					mo = moment();
+				}
+				return {
+					input: [mo.year(), mo.month()+1, mo.date()].concat(match.slice(2)),
+					format: 'YYYY MM DD h mm ss SSS ZZ'
+				}
+			},
+			_handler: function (match) {
 				var d;
 				if (match[1]) {
 					d = Date.create(match[1]);
 					if (isNaN(d)) {
 						return false;
 					}
-				} else {
+				}
+				else {
 					d = Date.current();
 					d.setMilliseconds(0);
 				}
@@ -178,40 +224,38 @@
 		// date such as "3-15-2010"
 		.addParser({
 			name: 'us',
-			matcher: compile("^(_MONTH_)([\\/-])(_DAY_)\\2(_YEAR_)$"),
-			replacer: '$1/$3/$4',
+			//                  $1               $2        $3
+			matcher: parseplus.compile("^(_MONTH_)([\\/-])(_DAY_)\\2(_YEAR_)$"),
+			format: 'MM * DD YYYY'
 		})
 		// date such as "15.03.2010"
 		.addParser({
 			name: 'world',
-			matcher: compile("^(_DAY_)([\\/\\.])(_MONTH_)\\2(_YEAR_)$"),
-			replacer: '$3/$1/$4',
+			//                  $1               $2          $3
+			matcher: parseplus.compile("^(_DAY_)([\\/\\.])(_MONTH_)\\2(_YEAR_)$"),
+			format: 'DD * MM YYYY'
 		})
 		// date such as "15-Mar-2010", "8 Dec 2011", "Thu, 8 Dec 2011"
 		.addParser({
-			name: 'RFC-1123',
-			matcher: compile("^(?:(?:_DAYNAME_),? )?(_DAY_)([ -])(_MONTHNAME_)\\2(_YEAR_)$"),
-			replacer: '$3 $1, $4',
+			name: 'middle-month',
+			//                                       $1           $2              $3
+			matcher: parseplus.compile("^(?:(?:_DAYNAME_),? )?(_DAY_)([ -])(_MONTHNAME_)\\2(_YEAR_)$"),
+			format: 'DD * MMM YYYY'
 		})
 		// date such as "March 4, 2012", "Mar 4 2012", "Sun Mar 4 2012"
 		.addParser({
-			name: 'Conversational',
-			matcher: compile("^(?:(?:_DAYNAME_),? )?(_MONTHNAME_) (_DAY_),? (_YEAR_)$"),
-			replacer: '$1 $2, $3',
+			name: 'conversational',
+			//                                       $1            $2        $3
+			matcher: parseplus.compile("^(?:(?:_DAYNAME_),? )?(_MONTHNAME_) (_DAY_),? (_YEAR_)$"),
+			replacer: '$1 $2 $3',
+			format: 'MMM DD YYYY'
 		})
 		// date such as "Tue Jun 22 17:47:27 +0000 2010"
 		.addParser({
-			name: 'Dangling-Year',
-			matcher: compile("^(?:_DAYNAME_) (_MONTHNAME_) (_DAY_) ((?:_H24_)\\:(?:_MIN_)(?:\\:_SEC_)?) (_TIMEZONE_) (_YEAR_)$"),
-			handler: function(m) {
-				var month = zeroPad( Date.getMonthByName(m[1]), 2 );
-				var day = zeroPad( m[2], 2 );
-				var date = Date.create(m[5] + '-' + month + '-' + day + 'T' + m[3] + m[4]);
-				if (isNaN(date)) {
-					return false;
-				}
-				return date;
-			}
+			name: 'dangling-year',
+			//                                          $1            $2      $3         $4      $5          $6           $7
+			matcher: parseplus.compile("^(?:_DAYNAME_) (_MONTHNAME_) (_DAY_) (_H24_)?\\:(_MIN_)?(\\:_SEC_)? (_TIMEZONE_) (_YEAR_)$"),
+			format: 'MMM DD HH mm ss ZZ YYYY'
 		})
 	;
 

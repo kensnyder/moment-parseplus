@@ -3,16 +3,7 @@ var parseplus = require('../parseplus.js');
 var expect = require("chai").expect;
 
 describe("extending parseplus", function() {
-
-	it("should add replacer", function () {
-		parseplus.addParser({
-			name: 'test1',
-			matcher: /^replace (\d+)$/,
-			replacer: '01/$1/1970'
-		});
-		expect(moment('replace 12').valueOf()).to.equal(+new Date(1970,0,12));
-		parseplus.removeParser('test1');
-	});
+	
 	it("should add handler", function () {
 		parseplus.addParser({
 			name: 'test2',
