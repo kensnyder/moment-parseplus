@@ -248,6 +248,13 @@
 				return moment().subtract(parseFloat(match[1]), match[2]);
 			}
 		})
+		.addParser({
+			name: 'in',
+			matcher: parseplus.compile("^in ([\\d.]+) (_UNIT_)s?$"),
+			handler: function(match) {
+				return moment().add(parseFloat(match[1]), match[2]);
+			}
+		})
 	;
 
 	return parseplus;
@@ -272,14 +279,6 @@
 // 		}
 // 	],
 //
-// 	// 5 months ago
-// 	[
-// 		'time_ago',
-// 		Date.create.makePattern("^(\\d+) (_UNIT_)s? ago$"),
-// 		function(match) {
-// 			return Date.current().add(-1 * match[1], match[2]);
-// 		}
-// 	],
 //
 // 	// in 2 hours/weeks/etc.
 // 	[
