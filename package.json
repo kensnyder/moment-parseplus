@@ -1,0 +1,36 @@
+{
+  "name": "moment-parseplus",
+  "version": "0.1.0",
+  "description": "Date parsing plugin for momentjs",
+  "main": "parseplus.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/mocha --reporter spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kensnyder/moparse.git"
+  },
+  "keywords": [
+    "moment",
+    "momentjs",
+    "date",
+    "parse",
+    "parsing"
+  ],
+  "author": "Ken Snyder <kendsnyder@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kensnyder/moment-parseplus/issues"
+  },
+  "homepage": "https://github.com/kensnyder/moment-parseplus#readme",
+  "dependencies": {
+    "moment": "^2.14.1"
+  },
+  "devDependencies": {
+    "mocha": "^2.5.3",
+    "chai": "^3.5.0"
+  }
+}
