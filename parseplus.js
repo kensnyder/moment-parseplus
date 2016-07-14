@@ -182,6 +182,7 @@
 		// 12-hour time
 		.addParser({
 			name: '12h',
+			//                               $1     $2           $3           $4           $5
 			matcher: parseplus.compile("^(?:(.+) )?(_H12_)(?:\\:(_MIN_)(?:\\:(_SEC_))?)? ?(_AMPM_)$"),
 			handler: function(match) {
 				var date, mo;
@@ -200,25 +201,8 @@
 				}
 				return {
 					input: [mo.year(), mo.month()+1, mo.date()].concat(match.slice(2)),
-					format: 'YYYY MM DD h mm ss SSS ZZ'
+					format: 'YYYY MM DD h mm ss a'
 				}
-			},
-			_handler: function (match) {
-				var d;
-				if (match[1]) {
-					d = Date.create(match[1]);
-					if (isNaN(d)) {
-						return false;
-					}
-				}
-				else {
-					d = Date.current();
-					d.setMilliseconds(0);
-				}
-				var hour = parseFloat(match[2]);
-				hour = match[5].toLowerCase() == 'am' ? (hour == 12 ? 0 : hour) : (hour == 12 ? 12 : hour + 12);
-				d.setHours(hour, parseFloat(match[3] || 0), parseFloat(match[4] || 0));
-				return d;
 			}
 		})
 		// date such as "3-15-2010"
@@ -257,6 +241,13 @@
 			matcher: parseplus.compile("^(?:_DAYNAME_) (_MONTHNAME_) (_DAY_) (_H24_)?\\:(_MIN_)?(\\:_SEC_)? (_TIMEZONE_) (_YEAR_)$"),
 			format: 'MMM DD HH mm ss ZZ YYYY'
 		})
+		.addParser({
+			name: 'ago',
+			matcher: parseplus.compile("^([\\d.]+) (_UNIT_)s? ago$"),
+			handler: function(match) {
+				return moment().subtract(parseFloat(match[1]), match[2]);
+			}
+		})
 	;
 
 	return parseplus;
@@ -267,54 +258,6 @@
 // //
 //
 // Date.create.patterns = [
-//
-// 	// 24-hour time (This will help catch Date objects that are casted to a string)
-// 	[
-// 		'24_hour',
-// 		Date.create.makePattern("^(?:(.+?)(?: |T))?(_H24_)\\:(_MIN_)(?:\\:(_SEC_)(?:\\.(_MS_))?)? ?(?:GMT)?(_TIMEZONE_)?(?: \\([A-Z]+\\))?$"),
-// 		function(match) {
-// 			var d;
-// 			if (match[1]) {
-// 				d = Date.create(match[1]);
-// 				if (isNaN(d)) {
-// 					return false;
-// 				}
-// 			} else {
-// 				d = Date.current();
-// 				d.setMilliseconds(0);
-// 			}
-// 			d.setHours(parseFloat(match[2]), parseFloat(match[3]), parseFloat(match[4] || 0));
-// 			if (match[5]) {
-// 				d.setMilliseconds(+String(match[5]).slice(0,3));
-// 			}
-// 			if (match[6]) {
-// 				d.setUTCOffsetString(match[6]);
-// 			}
-// 			return d;
-// 		}
-// 	],
-//
-// 	// 12-hour time
-// 	[
-// 		'12_hour',
-// 		Date.create.makePattern("^(?:(.+) )?(_H12_)(?:\\:(_MIN_)(?:\\:(_SEC_))?)? ?(_AMPM_)$"),
-// 		function(match) {
-// 			var d;
-// 			if (match[1]) {
-// 				d = Date.create(match[1]);
-// 				if (isNaN(d)) {
-// 					return false;
-// 				}
-// 			} else {
-// 				d = Date.current();
-// 				d.setMilliseconds(0);
-// 			}
-// 			var hour = parseFloat(match[2]);
-// 			hour = match[5].toLowerCase() == 'am' ? (hour == 12 ? 0 : hour) : (hour == 12 ? 12 : hour + 12);
-// 			d.setHours(hour, parseFloat(match[3] || 0), parseFloat(match[4] || 0));
-// 			return d;
-// 		}
-// 	],
 //
 // 	// 2 weeks after today, 3 months after 3-5-2008
 // 	[

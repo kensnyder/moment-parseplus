@@ -4,6 +4,9 @@ var expect = require("chai").expect;
 
 describe("24h date parser", function() {
 
+	it("should parse times like `20:42`", function () {
+		expect(+moment('March 4, 2012 20:42')).to.equal(+new Date(2012,2,4,20,42));
+	});
 	it("should parse times like `20:42:42`", function () {
 		expect(+moment('March 4, 2012 20:42:42')).to.equal(+new Date(2012,2,4,20,42,42));
 	});
