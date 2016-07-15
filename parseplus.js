@@ -4,17 +4,26 @@
 		define(['moment'], function (moment) {
 			return (root.returnExportsGlobal = factory(moment));
 		});
-	} else if (typeof module === 'object' && module.exports) {
+	}
+	else if (typeof module === 'object' && module.exports) {
 		// Node. Does not work with strict CommonJS, but
 		// only CommonJS-like environments that support module.exports,
 		// like Node.
 		module.exports = factory(require('moment'));
-	} else {
+	}
+	else {
 		// Browser globals
 		root.returnExportsGlobal = factory(root.moment);
 	}
 }(this, function (moment) {
 
+	/**
+	 * Hook that moment triggers when the date cannot be parsed
+	 * @param {Object} config  moment passes an object with info about the instantiation
+	 * @property {String} _i  The input string that was passed to the constructor
+	 * @property {Date} _d  Populate this property with a valid date
+	 * @property {Boolean} _isValid  Set to false if date still cannot be parsed
+	 */
 	moment.createFromInputFallback = function(config) {
 		var date = parseplus.attemptToParse(config._i);
 		if (date instanceof Date) {
@@ -26,6 +35,12 @@
 	};
 
 	(function(locale) {
+		/**
+		 * Monkeypatch moment.locale to update our parser regexes with new locale info
+		 * @param {String|Array} [names]
+		 * @param {Object} [object]
+		 * @returns {String}
+		 */
 		moment.locale = function(names, object) {
 			if (arguments.length === 0) {
 				return locale.call(moment);
@@ -42,6 +57,11 @@
 
 	var parseplus = {};
 
+	/**
+	 * Try to parse the given input string. Return a Date if parsing was successful
+	 * @param {String} input
+	 * @returns {Date|undefined}
+	 */
 	parseplus.attemptToParse = function(input) {
 		var match;
 		var parser;
@@ -76,6 +96,12 @@
 		}
 	};
 
+	/**
+	 * Attempt to format the given array of date parts with the given string
+	 * @param {Array} match  A list of date parts
+	 * @param {String} format  A space-delimited list of what each date part means
+	 * @returns {moment}
+	 */
 	parseplus.attemptFormat = function(match, format) {
 		var formatArr = [];
 		var dateStrs = [];
@@ -88,6 +114,11 @@
 		return moment(dateStrs.join('|'), formatArr.join('|'));
 	};
 
+	/**
+	 * Compile a string into a regex where things like _MONTH_ are auto replace
+	 * @param {String} code
+	 * @returns {RegExp}
+	 */
 	parseplus.compile = function(code) {
 		code = code.replace(/_([A-Z][A-Z0-9]+)_/g, function($0, $1) {
 			return parseplus.regexes[$1];
@@ -97,6 +128,9 @@
 		return matcher;
 	};
 
+	/**
+	 * Update all the parser regexes with new locale data
+	 */
 	parseplus.updateMatchers = function() {
 		regexes.MONTHNAME = moment.months().join('|') + '|' + moment.monthsShort().join('|');
 		regexes.DAYNAME = moment.weekdays().join('|') + '|' + moment.weekdaysShort().join('|');
@@ -108,6 +142,10 @@
 		});
 	};
 
+	/**
+	 * The strings used to generate regexes for parses
+	 * @type {Object}
+	 */
 	parseplus.regexes = {
 		YEAR: "[1-9]\\d{3}",
 		MONTH: "1[0-2]|0?[1-9]",
@@ -126,13 +164,27 @@
 		UNIT: "year|month|week|day|hour|minute|second|millisecond"
 	};
 
+	/**
+	 * The list of parsers
+	 * @type {Array}
+	 */
 	parseplus.parsers = [];
 
+	/**
+	 * Add a parser with the given specification
+	 * @param {Object} spec  Should contain name, matcher, and replacer or handler
+	 * @returns {parseplus}
+	 */
 	parseplus.addParser = function (spec) {
 		parseplus.parsers.push(spec);
 		return this;
 	};
 
+	/**
+	 * Remove the parser with the given name
+	 * @param {String} name
+	 * @returns {parseplus}
+	 */
 	parseplus.removeParser = function (name) {
 		parseplus.parsers.some(function(parser, i) {
 			if (parser.name == name) {
@@ -143,11 +195,16 @@
 		return this;
 	};
 
+	/**
+	 * Remove all parsers
+	 * @returns {parseplus}
+	 */
 	parseplus.clearParsers = function () {
 		parseplus.parsers = [];
 		return this;
 	};
 
+	// Register our built-in parsers!
 	parseplus
 		// 24 hour time
 		.addParser({
