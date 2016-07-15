@@ -57,6 +57,8 @@
 
 	var parseplus = {};
 
+	parseplus.currentYear = new Date().getFullYear();
+
 	/**
 	 * Try to parse the given input string. Return a Date if parsing was successful
 	 * @param {String} input
@@ -272,7 +274,7 @@
 			matcher: parseplus.compile("^(_MONTH_)[\\/-](_DAY_)$"),
 			handler: function(match) {
 				return {
-					input: [match[1], match[2], new Date().getFullYear()],
+					input: [match[1], match[2], parseplus.currentYear],
 					format: 'MM DD YYYY'
 				};
 			}
@@ -291,7 +293,7 @@
 			matcher: parseplus.compile("^(_DAY_)[\\/\\.](_MONTH_)$"),
 			handler: function(match) {
 				return {
-					input: [match[1], match[2], new Date().getFullYear()],
+					input: [match[1], match[2], parseplus.currentYear],
 					format: 'DD MM YYYY'
 				};
 			}
@@ -299,9 +301,21 @@
 		// date such as "15-Mar-2010", "8 Dec 2011", "Thu, 8 Dec 2011"
 		.addParser({
 			name: 'middle-month',
-			//                                       $1           $2              $3
+			//                                                 $1           $2              $3
 			matcher: parseplus.compile("^(?:(?:_DAYNAME_),? )?(_DAY_)([ -])(_MONTHNAME_)\\2(_YEAR_)$"),
 			format: 'DD * MMM YYYY'
+		})
+		// date such as "15-Mar", "8 Dec", "Thu, 8 Dec"
+		.addParser({
+			name: 'middle-month-yearless',
+			//                                                 $1         $2
+			matcher: parseplus.compile("^(?:(?:_DAYNAME_),? )?(_DAY_)[ -](_MONTHNAME_)$"),
+			handler: function(match) {
+				return {
+					input: [match[1], match[2], parseplus.currentYear],
+					format: 'DD MMM YYYY'
+				};
+			}
 		})
 		// date such as "March 4, 2012", "Mar 4 2012", "Sun Mar 4 2012"
 		.addParser({
