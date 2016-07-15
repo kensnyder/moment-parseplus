@@ -255,6 +255,29 @@
 				return moment().add(parseFloat(match[1]), match[2]);
 			}
 		})
+		.addParser({
+			name: 'today',
+			matcher: /^(today|now|tomorrow|yesterday)/i,
+			handler: function(match) {
+				switch (match[1].toLowerCase()) {
+					case 'today':
+					case 'now':
+						return moment();
+					case 'tomorrow':
+						return moment().add(1, 'day');
+					case 'yesterday':
+						return moment().subtract(1, 'day');
+				}
+			}
+		})
+		.addParser({
+			name: 'plus',
+			matcher: parseplus.compile("^([+-]) ?([\\d.]+) (_UNIT_)s?$"),
+			handler: function(match) {
+				var mult = match[1] == '-' ? -1 : 1;
+				return moment().add(mult * parseFloat(match[2]), match[3]);
+			}
+		})
 	;
 
 	return parseplus;
@@ -280,15 +303,6 @@
 // 	],
 //
 //
-// 	// in 2 hours/weeks/etc.
-// 	[
-// 		'in_time',
-// 		Date.create.makePattern("^in (\\d) (_UNIT_)s?$"),
-// 		function(match) {
-// 			return Date.current().add(match[1], match[2]);
-// 		}
-// 	],
-//
 // 	// "+2 hours", "-3 years"
 // 	[
 // 		'plus_minus',
@@ -296,38 +310,6 @@
 // 		var mult = match[1] == '-' ? -1 : 1;
 // 		return Date.current().add(mult * match[2], match[3]);
 // 	}
-// 	],
-//
-// 	// "/Date(1296824894000)/", "/Date(1296824894000-0700)/"
-// 	[
-// 		'asp_json',
-// 		/^\/Date\((\d+)([+-]\d{4})?\)\/$/i,
-// 		function(match) {
-// 			var d = new Date;
-// 			d.setTime(match[1]);
-// 			if (match[2]) {
-// 				d.setUTCOffsetString(match[2]);
-// 			}
-// 			return d;
-// 		}
-// 	],
-//
-// 	// today, tomorrow, yesterday
-// 	[
-// 		'today_tomorrow',
-// 		/^(today|now|tomorrow|yesterday)/i,
-// 		function(match) {
-// 			var now = Date.current();
-// 			switch (match[1].toLowerCase()) {
-// 				case 'today':
-// 				case 'now':
-// 					return now;
-// 				case 'tomorrow':
-// 					return now.add(1, 'day');
-// 				case 'yesterday':
-// 					return now.add(-1, 'day');
-// 			}
-// 		}
 // 	],
 //
 // 	// this/next/last january, next thurs
