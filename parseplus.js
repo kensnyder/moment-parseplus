@@ -88,10 +88,6 @@
 		return moment(dateStrs.join('|'), formatArr.join('|'));
 	};
 
-	parseplus.zeroPad = function(number, places) {
-
-	};
-
 	parseplus.compile = function(code) {
 		code = code.replace(/_([A-Z][A-Z0-9]+)_/g, function($0, $1) {
 			return parseplus.regexes[$1];
@@ -205,19 +201,43 @@
 				}
 			}
 		})
-		// date such as "3-15-2010"
+		// date such as "3-15-2010" and "3/15/2010"
 		.addParser({
 			name: 'us',
-			//                  $1               $2        $3
+			//                            $1       $2        $3      $4
 			matcher: parseplus.compile("^(_MONTH_)([\\/-])(_DAY_)\\2(_YEAR_)$"),
 			format: 'MM * DD YYYY'
 		})
-		// date such as "15.03.2010"
+		// date such as "3-15" and "3/15"
+		.addParser({
+			name: 'us-yearless',
+			//                            $1             $2
+			matcher: parseplus.compile("^(_MONTH_)[\\/-](_DAY_)$"),
+			handler: function(match) {
+				return {
+					input: [match[1], match[2], new Date().getFullYear()],
+					format: 'MM DD YYYY'
+				};
+			}
+		})
+		// date such as "15.03.2010" and "15/3/2010"
 		.addParser({
 			name: 'world',
-			//                  $1               $2          $3
+			//                            $1     $2        $3          $4
 			matcher: parseplus.compile("^(_DAY_)([\\/\\.])(_MONTH_)\\2(_YEAR_)$"),
 			format: 'DD * MM YYYY'
+		})
+		// date such as "15.03" and "15/3"
+		.addParser({
+			name: 'world-yearless',
+			//                            $1             $2
+			matcher: parseplus.compile("^(_DAY_)[\\/\\.](_MONTH_)$"),
+			handler: function(match) {
+				return {
+					input: [match[1], match[2], new Date().getFullYear()],
+					format: 'DD MM YYYY'
+				};
+			}
 		})
 		// date such as "15-Mar-2010", "8 Dec 2011", "Thu, 8 Dec 2011"
 		.addParser({
@@ -302,15 +322,6 @@
 // 		}
 // 	],
 //
-//
-// 	// "+2 hours", "-3 years"
-// 	[
-// 		'plus_minus',
-// 		Date.create.makePattern("^([+-]) ?(\\d+) (_UNIT_)s?$"), function(match) {
-// 		var mult = match[1] == '-' ? -1 : 1;
-// 		return Date.current().add(mult * match[2], match[3]);
-// 	}
-// 	],
 //
 // 	// this/next/last january, next thurs
 // 	[

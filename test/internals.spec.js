@@ -13,6 +13,7 @@ describe("parseplus internals", function() {
 	it("should compile regexp", function () {
 		parseplus.regexes.TEST = 'compile! \\d+';
 		var compiled = parseplus.compile('^ABC (_TEST_) DEF$');
+		delete parseplus.regexes.TEST;
 		var expected = /^ABC (compile! \d+) DEF$/i;
 		expect(compiled).to.be.instanceOf(RegExp);
 		expect(compiled.toString()).to.equal(expected.toString());
