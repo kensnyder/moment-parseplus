@@ -2,47 +2,50 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>moment-parseplus</title>
+	<link rel="stylesheet" href="../node_modules/mocha/mocha.css">
+	<script src="../node_modules/requirejs/require.js"></script>
 	<script>
 		require.config({
-			baseUrl: '/backbone-tests/',
+			baseUrl: '',
 			paths: {
-				'jquery'        : '/app/libs/jquery',
-				'underscore'    : '/app/libs/underscore',
-				'backbone'      : '/app/libs/backbone',
-				'mocha'         : 'libs/mocha',
-				'chai'          : 'libs/chai',
-				'chai-jquery'   : 'libs/chai-jquery',
-				'models'        : '/app/models'
-			},
-			shim: {
-				'chai-jquery': ['jquery', 'chai']
+				'moment': '../node_modules/moment/moment',
+				'mocha' : '../node_modules/mocha/mocha',
+				'chai'  : '../node_modules/chai/chai'
 			},
 			urlArgs: 'bust=' + (new Date()).getTime()
 		});
-
-//		define(function(require) {
-//			var chai = require('chai');
-//			var mocha = require('mocha');
-//			require('jquery');
-//			require('chai-jquery');
-//
-//			// Chai
-//			var should = chai.should();
-//			chai.use(chaiJquery);
-
-			mocha.setup('bdd');
-
+		require([
+			'mocha',
+			'chai',
+			'moment',
+			'../parseplus.js',
+		], function() {
+			window.mocha.setup('bdd');
 			require([
-				'specs/model-tests.js',
+				'./extending.spec.js',
+				'./internals.spec.js',
+				'./parser-12h.spec.js',
+				'./parser-24h.spec.js',
+				'./parser-conversational.spec.js',
+				'./parser-in-time.spec.js',
+				'./parser-middle-month.spec.js',
+				'./parser-middle-month-yearless.spec.js',
+				'./parser-plus.spec.js',
+				'./parser-time-ago.spec.js',
+				'./parser-today.spec.js',
+				'./parser-us.spec.js',
+				'./parser-us-yearless.spec.js',
+				'./parser-world.spec.js',
+				'./parser-world-yearless.spec.js'
 			], function() {
-				mocha.run();
+				window.mocha.run();
 			});
 
-//		});
+		});
 	</script>
 </head>
 <body>
-
+	<div id="mocha"></div>
 </body>
 </html>

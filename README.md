@@ -1,7 +1,7 @@
 # moment-parseplus
 
-[![Build Status](https://travis-ci.org/kensnyder/moment-parseplus.svg?branch=master&v0.1.0)](https://travis-ci.org/kensnyder/moment-parseplus)
-[![Code Coverage](https://codecov.io/gh/kensnyder/moment-parseplus/branch/master/graph/badge.svg?v0.1.0)](https://codecov.io/gh/kensnyder/moment-parseplus)
+[![Build Status](https://travis-ci.org/kensnyder/moment-parseplus.svg?branch=master&v0.9.0)](https://travis-ci.org/kensnyder/moment-parseplus)
+[![Code Coverage](https://codecov.io/gh/kensnyder/moment-parseplus/branch/master/graph/badge.svg?v0.9.0)](https://codecov.io/gh/kensnyder/moment-parseplus)
 [![MIT License](https://img.shields.io/npm/l/express.svg)](https://opensource.org/licenses/MIT)
 
 An extensible date parsing plugin for [momentjs](http://momentjs.com)
@@ -93,7 +93,7 @@ var parseplus = require('moment-parseplus');
 
 parseplus.addParser({
 	name: 'clicks',
-	matcher: /^(\d+) days into month (\d+) in year (\d{4})$/,
+	matcher: /^(\d+) days? into month (\d+) in year (\d{4})$/,
 	replacer: '$1 $2 $3',
 	format: 'DD MM YYYY'
 });
@@ -102,7 +102,7 @@ parseplus.addParser({
 ### Handler Examples
 
 A handler is a function that receives the match array and should return
-a date object or a moment object.
+a date object or a moment object. Two examples are below.
 
 #### Return a date object
 
@@ -158,3 +158,35 @@ parseplus.removeParser('us');
 - `us-yearless`
 - `world`
 - `world-yearless`
+
+## Testing
+
+After cloning this repo and running `npm install` you can run unit tests.
+
+### Node
+
+Powered by mocha
+
+```bash
+npm run test
+```
+
+### Browser
+
+Also powered by mocha
+
+```bash
+npm run test-browser
+```
+
+Or open `./test/index.html` in any browser.
+
+## Test Coverage
+
+Use Istanbul to see how much of the code is covered by unit tests
+
+```bash
+npm run coverage
+```
+
+## Contributing
