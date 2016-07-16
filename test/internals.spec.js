@@ -24,10 +24,7 @@ describe("parseplus internals", function() {
 			name: 'moo',
 			matcher: /^moo$/,
 			handler: function(match) {
-				return {
-					input: 'abc',
-					format: 'MM/DD/YYYY'
-				};
+				moment('invalid date :(');
 			}
 		});
 		expect(parseplus.attemptToParse('moo')).to.equal(undefined);

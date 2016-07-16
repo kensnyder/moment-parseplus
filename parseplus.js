@@ -83,12 +83,6 @@
 				else if (obj instanceof Date) {
 					return obj;
 				}
-				else if (obj && obj.input && obj.format) {
-					mo = parseplus.attemptFormat(obj.input, obj.format);
-					if (mo.isValid()) {
-						return mo.toDate();
-					}
-				}
 			}
 			else if (parser.format) {
 				mo = parseplus.attemptFormat(match.slice(1), parser.format);
@@ -150,7 +144,7 @@
 	 * @type {Object}
 	 */
 	parseplus.regexes = {
-		YEAR: "[1-9]\\d{3}",
+		YEAR: "[1-9]\\d{3}|\\d{2}",
 		MONTH: "1[0-2]|0?[1-9]",
 		MONTH2: "1[0-2]|0[1-9]",
 		MONTHNAME: "jan|january|feb|february|mar|march|apr|april|may|jun|june|jul|july|aug|august|sep|september|oct|october|nov|november|dec|december",
@@ -229,10 +223,10 @@
 					// today plus the given time
 					mo = moment();
 				}
-				return {
-					input: [mo.year(), mo.month()+1, mo.date()].concat(match.slice(2)),
-					format: 'YYYY MM DD hh mm ss SSS ZZ'
-				};
+				return moment(
+					[mo.year(), mo.month()+1, mo.date()].concat(match.slice(2)).join(' '),
+					'YYYY MM DD hh mm ss SSS ZZ'
+				);
 			}
 		})
 		// 12-hour time
@@ -255,10 +249,10 @@
 					// today plus the given time
 					mo = moment();
 				}
-				return {
-					input: [mo.year(), mo.month()+1, mo.date()].concat(match.slice(2)),
-					format: 'YYYY MM DD h mm ss a'
-				}
+				return moment(
+					[mo.year(), mo.month()+1, mo.date()].concat(match.slice(2)).join(' '),
+					'YYYY MM DD h mm ss a'
+				);
 			}
 		})
 		// date such as "3-15-2010" and "3/15/2010"
@@ -274,10 +268,10 @@
 			//                            $1             $2
 			matcher: parseplus.compile("^(_MONTH_)[\\/-](_DAY_)$"),
 			handler: function(match) {
-				return {
-					input: [match[1], match[2], parseplus.currentYear],
-					format: 'MM DD YYYY'
-				};
+				return moment(
+					[match[1], match[2], parseplus.currentYear].join(' '),
+					'MM DD YYYY'
+				);
 			}
 		})
 		// date such as "15.03.2010" and "15/3/2010"
@@ -293,10 +287,10 @@
 			//                            $1             $2
 			matcher: parseplus.compile("^(_DAY_)[\\/\\.](_MONTH_)$"),
 			handler: function(match) {
-				return {
-					input: [match[1], match[2], parseplus.currentYear],
-					format: 'DD MM YYYY'
-				};
+				return moment(
+					[match[1], match[2], parseplus.currentYear].join(' '),
+					'DD MM YYYY'
+				);
 			}
 		})
 		// date such as "15-Mar-2010", "8 Dec 2011", "Thu, 8 Dec 2011"
@@ -312,10 +306,10 @@
 			//                                                 $1         $2
 			matcher: parseplus.compile("^(?:(?:_DAYNAME_),? )?(_DAY_)[ -](_MONTHNAME_)$"),
 			handler: function(match) {
-				return {
-					input: [match[1], match[2], parseplus.currentYear],
-					format: 'DD MMM YYYY'
-				};
+				return moment(
+					[match[1], match[2], parseplus.currentYear].join(' '),
+					'DD MMM YYYY'
+				);
 			}
 		})
 		// date such as "March 4, 2012", "Mar 4 2012", "Sun Mar 4 2012"
