@@ -1,0 +1,8 @@
+codecov:
+  branch: master
+  bot: null
+
+coverage:
+  precision: 1
+  round: down
+  range: "70...100"
