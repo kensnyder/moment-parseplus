@@ -4,6 +4,61 @@ var expect = require("chai").expect;
 
 describe("parseplus internals", function() {
 
+	it("should attempt to parse invalid dates with replacers", function () {
+		var parsers = parseplus.parsers;
+		parseplus.clearParsers();
+		parseplus.addParser({
+			name: 'moo',
+			matcher: /^moo$/,
+			replacer: '$0',
+			format: 'MM/DD/YYY'
+		});
+		expect(parseplus.attemptToParse('moo')).to.equal(undefined);
+		parseplus.clearParsers();
+		parseplus.parsers = parsers;
+	});
+	it("should attempt to parse invalid dates with handlers", function () {
+		var parsers = parseplus.parsers;
+		parseplus.clearParsers();
+		parseplus.addParser({
+			name: 'moo',
+			matcher: /^moo$/,
+			handler: function(match) {
+				return {
+					input: 'abc',
+					format: 'MM/DD/YYYY'
+				};
+			}
+		});
+		expect(parseplus.attemptToParse('moo')).to.equal(undefined);
+		parseplus.clearParsers();
+		parseplus.parsers = parsers;
+	});
+	it("should attempt to parse invalid dates with handlers 2", function () {
+		var parsers = parseplus.parsers;
+		parseplus.clearParsers();
+		parseplus.addParser({
+			name: 'moo',
+			matcher: /^moo$/,
+			handler: function(match) {
+				moment('moonpies');
+			}
+		});
+		expect(parseplus.attemptToParse('moo')).to.equal(undefined);
+		parseplus.clearParsers();
+		parseplus.parsers = parsers;
+	});
+	it("should ignore invalid handlers", function () {
+		var parsers = parseplus.parsers;
+		parseplus.clearParsers();
+		parseplus.addParser({
+			name: 'moo',
+			matcher: /^moo$/
+		});
+		expect(parseplus.attemptToParse('moo')).to.equal(undefined);
+		parseplus.clearParsers();
+		parseplus.parsers = parsers;
+	});
 	it("should parse formats", function () {
 		expect(+parseplus.attemptFormat([1,2,2016],'MM DD YYYY')).to.equal(+new Date(2016,0,2));
 	});

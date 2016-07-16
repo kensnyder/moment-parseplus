@@ -14,7 +14,7 @@
 	}
 	else {
 		// Browser globals
-		root.returnExportsGlobal = factory(root.moment);
+		root.parseplus = factory(root.moment);
 	}
 }(this, function (moment) {
 
