@@ -1,4 +1,5 @@
 (function (root, factory) {
+	/* istanbul ignore next */
 	if (typeof define === 'function' && define.amd) {
 		// AMD. Register as an anonymous module.
 		define(['moment'], function (moment) {
@@ -34,26 +35,26 @@
 		}
 	};
 
-	(function(locale) {
-		/**
-		 * Monkeypatch moment.locale to update our parser regexes with new locale info
-		 * @param {String|Array} [names]
-		 * @param {Object} [object]
-		 * @returns {String}
-		 */
-		moment.locale = function(names, object) {
-			if (arguments.length === 0) {
-				return locale.call(moment);
-			}
-			var currName = locale.call(moment);
-			var result = locale.call(moment, names, object);
-			var newName = locale.call(moment);
-			if (currName != newName) {
-				parseplus.updateMatchers();
-			}
-			return result;
-		};
-	})(moment.locale);
+	// (function(locale) {
+	// 	/**
+	// 	 * Monkeypatch moment.locale to update our parser regexes with new locale info
+	// 	 * @param {String|Array} [names]
+	// 	 * @param {Object} [object]
+	// 	 * @returns {String}
+	// 	 */
+	// 	moment.locale = function(names, object) {
+	// 		if (arguments.length === 0) {
+	// 			return locale.call(moment);
+	// 		}
+	// 		var currName = locale.call(moment);
+	// 		var result = locale.call(moment, names, object);
+	// 		var newName = locale.call(moment);
+	// 		if (currName != newName) {
+	// 			parseplus.updateMatchers();
+	// 		}
+	// 		return result;
+	// 	};
+	// })(moment.locale);
 
 	var parseplus = {};
 
@@ -82,7 +83,7 @@
 				else if (obj instanceof Date) {
 					return obj;
 				}
-				else if (obj.input && obj.format) {
+				else if (obj && obj.input && obj.format) {
 					mo = parseplus.attemptFormat(obj.input, obj.format);
 					if (mo.isValid()) {
 						return mo.toDate();
@@ -130,19 +131,19 @@
 		return matcher;
 	};
 
-	/**
-	 * Update all the parser regexes with new locale data
-	 */
-	parseplus.updateMatchers = function() {
-		regexes.MONTHNAME = moment.months().join('|') + '|' + moment.monthsShort().join('|');
-		regexes.DAYNAME = moment.weekdays().join('|') + '|' + moment.weekdaysShort().join('|');
-		regexes.AMPM = moment.localeData().meridiemParse.source;
-		parsers.forEach(function(parser) {
-			if (parser.matcher.parseTpl) {
-				parser.matcher = compile(parser.matcher.parseTpl);
-			}
-		});
-	};
+	// /**
+	//  * Update all the parser regexes with new locale data
+	//  */
+	// parseplus.updateMatchers = function() {
+	// 	regexes.MONTHNAME = moment.months().join('|') + '|' + moment.monthsShort().join('|');
+	// 	regexes.DAYNAME = moment.weekdays().join('|') + '|' + moment.weekdaysShort().join('|');
+	// 	regexes.AMPM = moment.localeData().meridiemParse.source;
+	// 	parsers.forEach(function(parser) {
+	// 		if (parser.matcher.parseTpl) {
+	// 			parser.matcher = compile(parser.matcher.parseTpl);
+	// 		}
+	// 	});
+	// };
 
 	/**
 	 * The strings used to generate regexes for parses
