@@ -71,6 +71,9 @@ var date = moment('March 5th, 2016');
 - tomorrow
 - yesterday
 
+### Twitter
+- Tue Jun 22 17:47:27 +0000 2010
+
 ## What is this sorcery?
 
 moment provides a `moment.createFromInputFallback` method you can define
