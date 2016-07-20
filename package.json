@@ -9,7 +9,8 @@
   "scripts": {
     "test": "./node_modules/.bin/mocha --reporter spec",
     "test-browser": "open test/index.html",
-    "coverage": "node ./node_modules/istanbul/lib/cli.js cover node_modules/.bin/_mocha -- -- test/**/*.spec.js"
+    "coverage": "node ./node_modules/istanbul/lib/cli.js cover node_modules/.bin/_mocha -- -- test/**/*.spec.js",
+    "view-coverage": "open ./coverage/lcov-report/index.html"
   },
   "repository": {
     "type": "git",

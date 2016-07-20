@@ -60,6 +60,7 @@ var date = moment('March 5th, 2016');
 ### Calculated
 - +5 hours
 - -2 weeks
+- +8day
 - 3 months ago
 - in 6 hours
 - etc.
@@ -114,7 +115,7 @@ parseplus.addParser({
 	matcher: /^yesteryear$/,
 	handler: function(match) {
 		var date = new Date();
-		return new Date(365*24*60*60*100 + date);
+		return new Date(-1*365*24*60*60*100 + date);
 	}
 });
 ```
@@ -147,10 +148,11 @@ parseplus.removeParser('us');
 
 - `12h` 12-hour time
 - `24h` 24-hour time
-- `conversational` Named months such as "March 4, 2012"
+- `conversational` Named months such as "March 14, 2012"
+- `conversational-yearless` Named months such as "March 14"
 - `in-time` Time in the future such as "in 4 weeks"
-- `middle-month`
-- `middle-month-yearless`
+- `rfc-2822`
+- `rfc-2822-yearless`
 - `plus` Addition and subtraction such as "+5 months" or "-30 seconds"
 - `time-ago` Time ago such as "5 months ago"
 - `today` For the strings "now", "today", "tomorrow", "yesterday"

@@ -13,5 +13,8 @@ describe("plus date parser", function() {
 	it("should parse times like `-1 day`", function () {
 		expect(+moment('-1 day')).to.be.closeTo(+new Date()-24*60*60*1000, 100);
 	});
+	it("should parse times like `-3days`", function () {
+		expect(+moment('-3days')).to.be.closeTo(+new Date()-3*24*60*60*1000, 100);
+	});
 
 });
