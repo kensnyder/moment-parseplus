@@ -2,7 +2,7 @@ var moment = require('moment');
 require('../parseplus.js');
 var expect = require("chai").expect;
 
-describe("middle-month-yearless date parser", function() {
+describe("rfc-2822-yearless date parser", function() {
 
 	var currentYear = new Date().getFullYear();
 

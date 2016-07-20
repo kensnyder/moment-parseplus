@@ -2,7 +2,7 @@ var moment = require('moment');
 require('../parseplus.js');
 var expect = require("chai").expect;
 
-describe("middle month date parser", function() {
+describe("rfc-2822 date parser", function() {
 
 	it("should parse dates like `15-Mar-2010`", function() {
 		expect(+moment('15-Mar-2010')).to.equal(+new Date(2010,2,15));

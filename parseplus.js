@@ -550,7 +550,7 @@
 		})
 		// date such as "Tue Jun 22 17:47:27 +0000 2010"
 		.addParser({
-			name: 'dangling-year',
+			name: 'twitter',
 			//                                          $1            $2      $3         $4      $5          $6           $7
 			matcher: parseplus.compile("^(?:_DAYNAME_) (_MONTHNAME_) (_DAY_) (_H24_)?\\:(_MIN_)?(\\:_SEC_)? (_TIMEZONE_) (_YEAR_)$"),
 			format: 'MMM DD HH mm ss ZZ YYYY'
