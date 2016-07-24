@@ -1,6 +1,6 @@
 {
   "name": "moment-parseplus",
-  "version": "0.9.0",
+  "version": "1.0.0",
   "description": "Date parsing plugin for momentjs",
   "main": "parseplus.js",
   "directories": {

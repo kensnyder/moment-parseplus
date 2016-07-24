@@ -1,8 +1,8 @@
 # moment-parseplus
 
-[![Build Status](https://travis-ci.org/kensnyder/moment-parseplus.svg?branch=master&v0.9.0)](https://travis-ci.org/kensnyder/moment-parseplus)
-[![Code Coverage](https://codecov.io/gh/kensnyder/moment-parseplus/branch/master/graph/badge.svg?v0.9.0)](https://codecov.io/gh/kensnyder/moment-parseplus)
-[![MIT License](https://img.shields.io/npm/l/express.svg)](https://opensource.org/licenses/MIT)
+[![Build Status](https://travis-ci.org/kensnyder/moment-parseplus.svg?branch=master&v=1.0.0)](https://travis-ci.org/kensnyder/moment-parseplus)
+[![Code Coverage](https://codecov.io/gh/kensnyder/moment-parseplus/branch/master/graph/badge.svg?v=1.0.0)](https://codecov.io/gh/kensnyder/moment-parseplus)
+[![MIT License](https://img.shields.io/npm/l/express.svg?v=1.0.0)](https://opensource.org/licenses/MIT)
 
 An extensible date parsing plugin for [momentjs](http://momentjs.com)
 
@@ -22,9 +22,21 @@ require('moment-parseplus');
 var date = moment('March 5th, 2016');
 ```
 
-## Supported formats
+## Supported format examples
 
-### US Short Date
+#### 12- and 24-hour Time _(preceded by any date format)_
+- 8:00:00 pm
+- 08:00p.m.
+- 8:00pm
+- 8:00p
+- 8:00am
+- 8:00a
+- 8am
+- 22:00:00.000
+- 22:00:00
+- 22:00
+
+#### US Short Date
 - 03/25/2016
 - 03/25/16
 - 3/25/2016
@@ -38,14 +50,14 @@ var date = moment('March 5th, 2016');
 - 03-25
 - 3-25
 
-### World Short Date
+#### World Short Date
 - 25.03.2016
 - 25.03.16
 - 25.3.2016
 - 25.3.16
 - 25.3
 
-### Named Month
+#### Named Month
 - March 25, 2016
 - 25th of March, 2016
 - Mar 25 2016
@@ -57,7 +69,7 @@ var date = moment('March 5th, 2016');
 - 25-Mar-16
 - 25-Mar
 
-### Calculated
+#### Calculated
 - +5 hours
 - -2 weeks
 - +8day
@@ -65,14 +77,23 @@ var date = moment('March 5th, 2016');
 - in 6 hours
 - etc.
 
-### Keyword
+#### Keyword
 - now
 - today
 - tomorrow
 - yesterday
 
-### Twitter
+#### Twitter
 - Tue Jun 22 17:47:27 +0000 2010
+
+## Locale Support
+
+The built-in parsers containing month and day names are automatically
+updated when locale is changed using `moment.locale(name)`.
+
+For example, setting locale to french (by including the locale file
+or calling `moment.locale('fr')`), will allow parsing dates such as
+"15 septembre 2015".
 
 ## What is this sorcery?
 
@@ -81,6 +102,8 @@ to create additional parsing rules. moment-parseplus implements that
 function and gets invoked when moment fails to parse the given string.
 
 ## How do I add my own formats?
+
+parseplus has an `addParser()` function to add a custom parser.
 
 Parsers need to have a `name` and a `matcher`. The `name` allows
 removing the parser later. The `matcher` is a RegExp that finds the
@@ -118,7 +141,7 @@ parseplus.addParser({
 	matcher: /^yesteryear$/,
 	handler: function(match) {
 		var date = new Date();
-		return new Date(-1*365*24*60*60*100 + date);
+		return new Date(-1*365*24*60*60*1000 + date);
 	}
 });
 ```
@@ -151,24 +174,26 @@ parseplus.removeParser('us');
 
 - `12h` 12-hour time
 - `24h` 24-hour time
+- `ago` Time ago such as "5 months ago"
 - `conversational` Named months such as "March 14, 2012"
 - `conversational-yearless` Named months such as "March 14"
-- `in-time` Time in the future such as "in 4 weeks"
-- `rfc-2822`
-- `rfc-2822-yearless`
+- `in` Time in the future such as "in 4 weeks"
+- `rfc-2822` Date such as "15-Mar-2010", "8 Dec 2011", "Thu, 8 Dec 2011"
+- `rfc-2822-yearless` Date such as "15-Mar", "8 Dec", "Thu, 8 Dec"
 - `plus` Addition and subtraction such as "+5 months" or "-30 seconds"
-- `time-ago` Time ago such as "5 months ago"
 - `today` For the strings "now", "today", "tomorrow", "yesterday"
-- `us`
-- `us-yearless`
-- `world`
-- `world-yearless`
+- `twitter` Date such as "Tue Jun 22 17:47:27 +0000 2010"
+- `us` Date such as "3-15-2010" and "3/15/2010"
+- `us-yearless` Date such as "3-15" and "3/15"
+- `world` Date such as "15.03.2010" and "15/3/2010"
+- `world-yearless` Date such as "15.03" and "15/3"
 
 ## Testing
 
-After cloning this repo and running `npm install` you can run unit tests.
+After cloning this repo and running `npm install` you can run unit tests
+on node or in the browser.
 
-### Node
+### Unit Tests on Node
 
 Powered by mocha
 
@@ -176,7 +201,7 @@ Powered by mocha
 npm run test
 ```
 
-### Browser
+### Unit Tests in the Browser
 
 Also powered by mocha
 
@@ -195,3 +220,7 @@ npm run coverage
 ```
 
 ## Contributing
+
+Contributions are welcome. Please open a GitHub ticket for bugs or
+feature requests. Please make a pull request for any fixes or
+new code you'd like to be incorporated.

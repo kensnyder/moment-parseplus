@@ -35,30 +35,33 @@
 		}
 	};
 
-	// (function(locale) {
-	// 	/**
-	// 	 * Monkeypatch moment.locale to update our parser regexes with new locale info
-	// 	 * @param {String|Array} [names]
-	// 	 * @param {Object} [object]
-	// 	 * @returns {String}
-	// 	 */
-	// 	moment.locale = function(names, object) {
-	// 		if (arguments.length === 0) {
-	// 			return locale.call(moment);
-	// 		}
-	// 		var currName = locale.call(moment);
-	// 		var result = locale.call(moment, names, object);
-	// 		var newName = locale.call(moment);
-	// 		if (currName != newName) {
-	// 			parseplus.updateMatchers();
-	// 		}
-	// 		return result;
-	// 	};
-	// })(moment.locale);
+	(function(locale) {
+		/**
+		 * Monkeypatch moment.locale to update our parser regexes with new locale info
+		 * @param {String|Array} [names]
+		 * @param {Object} [object]
+		 * @returns {String}
+		 */
+		moment.locale = function(names, object) {
+			if (arguments.length === 0) {
+				return locale.call(moment);
+			}
+			var currName = locale.call(moment);
+			var result = locale.call(moment, names, object);
+			var newName = locale.call(moment);
+			if (currName != newName) {
+				parseplus.updateMatchers();
+			}
+			return result;
+		};
+	})(moment.locale);
 
+	/**
+	 * The parseplus object including methods addMatcher and removeMatcher.
+	 * Also contains all other methods and values parseplus uses internally.
+	 * @type {Object}
+	 */
 	var parseplus = {};
-
-	parseplus.currentYear = new Date().getFullYear();
 
 	/**
 	 * Try to parse the given input string. Return a Date if parsing was successful
@@ -73,9 +76,11 @@
 		var mo;
 		while ((parser = parseplus.parsers[i++])) {
 			if (!(match = input.match(parser.matcher))) {
+				// this parser cannot parse this date string
 				continue;
 			}
 			if (parser.handler) {
+				// a handler function that should return moment or Date
 				obj = parser.handler(match, input);
 				if (obj instanceof moment && obj.isValid()) {
 					return obj.toDate();
@@ -85,6 +90,7 @@
 				}
 			}
 			else if (parser.format) {
+				// a handler format which will pass a parse string to moment
 				mo = parseplus.attemptFormat(match.slice(1), parser.format);
 				if (mo.isValid()) {
 					return mo.toDate();
@@ -102,6 +108,7 @@
 	parseplus.attemptFormat = function(match, format) {
 		var formatArr = [];
 		var dateStrs = [];
+		// go through each format string and line up to match
 		format.split(' ').forEach(function(f, idx) {
 			if (f != '*' && match[idx] !== '') {
 				dateStrs.push(match[idx]);
@@ -117,27 +124,27 @@
 	 * @returns {RegExp}
 	 */
 	parseplus.compile = function(code) {
-		code = code.replace(/_([A-Z][A-Z0-9]+)_/g, function($0, $1) {
+		var compiled = code.replace(/_([A-Z][A-Z0-9]+)_/g, function($0, $1) {
 			return parseplus.regexes[$1];
 		});
-		var matcher = new RegExp(code, 'i');
-		matcher.parseTpl = code;
-		return matcher;
+		return new RegExp(compiled, 'i');
 	};
 
-	// /**
-	//  * Update all the parser regexes with new locale data
-	//  */
-	// parseplus.updateMatchers = function() {
-	// 	regexes.MONTHNAME = moment.months().join('|') + '|' + moment.monthsShort().join('|');
-	// 	regexes.DAYNAME = moment.weekdays().join('|') + '|' + moment.weekdaysShort().join('|');
-	// 	regexes.AMPM = moment.localeData().meridiemParse.source;
-	// 	parsers.forEach(function(parser) {
-	// 		if (parser.matcher.parseTpl) {
-	// 			parser.matcher = compile(parser.matcher.parseTpl);
-	// 		}
-	// 	});
-	// };
+	/**
+	 * Update all the parser regexes with new locale data
+	 */
+	parseplus.updateMatchers = function() {
+		parseplus.regexes.MONTHNAME = moment.months().join('|') + '|' + moment.monthsShort().join('|');
+		parseplus.regexes.DAYNAME = moment.weekdays().join('|') + '|' + moment.weekdaysShort().join('|');
+		var localeData = moment.localeData();
+		parseplus.regexes.AMPM = localeData._config.meridiemParse.source;
+		parseplus.regexes.ORDINAL = localeData._config.ordinalParse.source.replace(/.*\(([^)]+)\).*/, '$1');
+		parseplus.parsers.forEach(function(parser) {
+			if (parser.template) {
+				parser.matcher = parseplus.compile(parser.template);
+			}
+		});
+	};
 
 	/**
 	 * The strings used to generate regexes for parses
@@ -155,7 +162,7 @@
 		TZABBR: "[A-Z]{3,10}",
 		H24: "[01]\\d|2[0-3]",
 		H12: "0?[1-9]|1[012]",
-		AMPM: "am|pm",
+		AMPM: "[ap]\\.?m?\\.?",
 		MIN: "[0-5]\\d",
 		SEC: "[0-5]\\d",
 		MS: "\\d{3,}",
@@ -163,6 +170,239 @@
 		ORDINAL: "st|nd|rd|th"
 	};
 
+	/**
+	 * The list of parsers
+	 * @type {Array}
+	 */
+	parseplus.parsers = [];
+
+	/**
+	 * Add a parser with the given specification
+	 * @param {Object} spec  Should contain name, matcher, and replacer or handler
+	 * @returns {parseplus}
+	 */
+	parseplus.addParser = function (spec) {
+		if (spec.template) {
+			spec.matcher = parseplus.compile(spec.template);
+		}
+		parseplus.parsers.push(spec);
+		return this;
+	};
+
+	/**
+	 * Remove the parser with the given name
+	 * @param {String} name
+	 * @returns {parseplus}
+	 */
+	parseplus.removeParser = function (name) {
+		parseplus.parsers.some(function(parser, i) {
+			if (parser.name == name) {
+				parseplus.parsers.splice(i, 1);
+				return true;
+			}
+		});
+		return this;
+	};
+
+	/**
+	 * Remove all parsers
+	 * @returns {parseplus}
+	 */
+	parseplus.clearParsers = function () {
+		parseplus.parsers = [];
+		return this;
+	};
+
+	// Register our built-in parsers!
+	parseplus
+		// 24 hour time
+		.addParser({
+			// lots of 24h time such as "23:59", "T23:59:59+0700", "23:59:59 GMT-05:00", "23:59:59 CST", "T23:59:59Z"
+			name: '24h',
+			//              $1            $2        $3           $4           $5                   $6             $7
+			template: "^(?:(.+?)(?: |T))?(_H24_)\\:(_MIN_)(?:\\:(_SEC_)(?:\\.(_MS_))?)? ?(?:GMT)? ?(_TIMEZONE_)? ?(_TZABBR_)?$",
+			handler: function(match) {
+				var date, mo;
+				if (match[1]) {
+					date = parseplus.attemptToParse(match[1]);
+					// console.log(['24h parse', match[1], 'into', moment(date).toString()]);
+					if (date) {
+						mo = moment(date);
+					}
+					else {
+						return;
+					}
+				}
+				else {
+					// today plus the given time
+					mo = moment();
+				}
+				if (!match[6] && match[7]) {
+					match[6] = parseplus.tzabbrs[match[7]];
+					match[7] = '';
+				}
+				var parts = [mo.year(), mo.month()+1, mo.date()].concat(match.slice(2));
+				parts[5] = parts[5] || '00';
+				parts[6] = parts[6] || '000';
+				parts.pop(); // remove 9th item
+				return moment(parts.join('|'), 'YYYY|MM|DD|HH|mm|ss|SSS|ZZ');
+			}
+		})
+		// 12-hour time
+		.addParser({
+			name: '12h',
+			//              $1     $2           $3           $4           $5
+			template: "^(?:(.+) )?(_H12_)(?:\\:(_MIN_)(?:\\:(_SEC_))?)? ?(_AMPM_)$",
+			handler: function(match) {
+				var date, mo;
+				if (match[1]) {
+					date = parseplus.attemptToParse(match[1]);
+					if (date) {
+						mo = moment(date);
+					}
+					else {
+						return;
+					}
+				}
+				else {
+					// today plus the given time
+					mo = moment();
+				}
+				return moment(
+					[mo.year(), mo.month()+1, mo.date()].concat(match.slice(2)).join(' '),
+					'YYYY MM DD h mm ss a'
+				);
+			}
+		})
+		// date such as "3-15-2010" and "3/15/2010"
+		.addParser({
+			name: 'us',
+			//           $1       $2        $3      $4
+			template: "^(_MONTH_)([\\/-])(_DAY_)\\2(_YEAR_)$",
+			format: 'MM * DD YYYY'
+		})
+		// date such as "3-15" and "3/15"
+		.addParser({
+			name: 'us-yearless',
+			//           $1             $2
+			template: "^(_MONTH_)[\\/-](_DAY_)$",
+			handler: function(match) {
+				return moment(
+					[match[1], match[2], new Date().getFullYear()].join(' '),
+					'MM DD YYYY'
+				);
+			}
+		})
+		// date such as "15.03.2010" and "15/3/2010"
+		.addParser({
+			name: 'world',
+			//           $1     $2        $3          $4
+			template: "^(_DAY_)([\\/\\.])(_MONTH_)\\2(_YEAR_)$",
+			format: 'DD * MM YYYY'
+		})
+		// date such as "15.03" and "15/3"
+		.addParser({
+			name: 'world-yearless',
+			//           $1             $2
+			template: "^(_DAY_)[\\/\\.](_MONTH_)$",
+			handler: function(match) {
+				return moment(
+					[match[1], match[2], new Date().getFullYear()].join(' '),
+					'DD MM YYYY'
+				);
+			}
+		})
+		// date such as "15-Mar-2010", "8 Dec 2011", "Thu, 8 Dec 2011"
+		.addParser({
+			name: 'rfc-2822',
+			//                                $1                   $2                    $3
+			template: "^(?:(?:_DAYNAME_),? )?(_DAY_)(?:_ORDINAL_)?([ -])(_MONTHNAME_)\\2(_YEAR_)$",
+			format: 'DD * MMM YYYY'
+		})
+		// date such as "15-Mar", "8 Dec", "Thu, 8 Dec"
+		.addParser({
+			name: 'rfc-2822-yearless',
+			//                                $1                       $2
+			template: "^(?:(?:_DAYNAME_),? )?(_DAY_)(?:_ORDINAL_)?[ -](_MONTHNAME_)$",
+			handler: function(match) {
+				return moment(
+					[match[1], match[2], new Date().getFullYear()].join(' '),
+					'DD MMM YYYY'
+				);
+			}
+		})
+		// date such as "March 4, 2012", "Mar 4 2012", "Sun Mar 4 2012"
+		.addParser({
+			name: 'conversational',
+			//                                $1            $2                      $3
+			template: "^(?:(?:_DAYNAME_),? )?(_MONTHNAME_) (_DAY_)(?:_ORDINAL_)?,? (_YEAR_)$",
+			replacer: '$1 $2 $3',
+			format: 'MMM DD YYYY'
+		})
+		// date such as "March 4", "Mar 4", "Sun Mar 4"
+		.addParser({
+			name: 'conversational-yearless',
+			//                                $1            $2
+			template: "^(?:(?:_DAYNAME_),? )?(_MONTHNAME_) (_DAY_)(?:_ORDINAL_)?$",
+			handler: function (match) {
+				return moment(
+					[match[1], match[2], new Date().getFullYear()].join(' '),
+					'MMM DD YYYY'
+				);
+			}
+		})
+		// date such as "Tue Jun 22 17:47:27 +0000 2010"
+		.addParser({
+			name: 'twitter',
+			//                         $1            $2      $3         $4      $5          $6           $7
+			template: "^(?:_DAYNAME_) (_MONTHNAME_) (_DAY_) (_H24_)?\\:(_MIN_)?(\\:_SEC_)? (_TIMEZONE_) (_YEAR_)$",
+			format: 'MMM DD HH mm ss ZZ YYYY'
+		})
+		.addParser({
+			name: 'ago',
+			template: "^([\\d.]+) (_UNIT_)s? ago$",
+			handler: function(match) {
+				return moment().subtract(parseFloat(match[1]), match[2]);
+			}
+		})
+		.addParser({
+			name: 'in',
+			template: "^in ([\\d.]+) (_UNIT_)s?$",
+			handler: function(match) {
+				return moment().add(parseFloat(match[1]), match[2]);
+			}
+		})
+		.addParser({
+			name: 'today',
+			matcher: /^(today|now|tomorrow|yesterday)/i,
+			handler: function(match) {
+				switch (match[1].toLowerCase()) {
+					case 'today':
+					case 'now':
+						return moment();
+					case 'tomorrow':
+						return moment().add(1, 'day');
+					case 'yesterday':
+						return moment().subtract(1, 'day');
+				}
+			}
+		})
+		.addParser({
+			name: 'plus',
+			template: "^([+-]) ?([\\d.]+) ?(_UNIT_)s?$",
+			handler: function(match) {
+				var mult = match[1] == '-' ? -1 : 1;
+				return moment().add(mult * parseFloat(match[2]), match[3]);
+			}
+		})
+	;
+
+	/**
+	 * A lookup of Timezone offset string by abbreviation. In some cases
+	 * multiple timezones have the same abbreviation. In those cases
+	 * the more US-centric one is used
+	 * @type {Object}
+	 */
 	parseplus.tzabbrs = {
 		"ACDT": "+10:30", // Australian Central Daylight Savings Time
 		"ACST": "+09:30", // Australian Central Standard Time
@@ -369,230 +609,6 @@
 		"YEKT": "+05:00", // Yekaterinburg Time
 		"Z": "+00:00" // Zulu Time (Coordinated Universal Time)
 	};
-
-	/**
-	 * The list of parsers
-	 * @type {Array}
-	 */
-	parseplus.parsers = [];
-
-	/**
-	 * Add a parser with the given specification
-	 * @param {Object} spec  Should contain name, matcher, and replacer or handler
-	 * @returns {parseplus}
-	 */
-	parseplus.addParser = function (spec) {
-		parseplus.parsers.push(spec);
-		return this;
-	};
-
-	/**
-	 * Remove the parser with the given name
-	 * @param {String} name
-	 * @returns {parseplus}
-	 */
-	parseplus.removeParser = function (name) {
-		parseplus.parsers.some(function(parser, i) {
-			if (parser.name == name) {
-				parseplus.parsers.splice(i, 1);
-				return true;
-			}
-		});
-		return this;
-	};
-
-	/**
-	 * Remove all parsers
-	 * @returns {parseplus}
-	 */
-	parseplus.clearParsers = function () {
-		parseplus.parsers = [];
-		return this;
-	};
-
-	// Register our built-in parsers!
-	parseplus
-		// 24 hour time
-		.addParser({
-			// lots of 24h time such as "23:59", "T23:59:59+0700", "23:59:59 GMT-05:00", "23:59:59 CST", "T23:59:59Z"
-			name: '24h',
-			//                               $1            $2        $3           $4           $5                   $6             $7
-			matcher: parseplus.compile("^(?:(.+?)(?: |T))?(_H24_)\\:(_MIN_)(?:\\:(_SEC_)(?:\\.(_MS_))?)? ?(?:GMT)? ?(_TIMEZONE_)? ?(_TZABBR_)?$"),
-			handler: function(match) {
-				var date, mo;
-				if (match[1]) {
-					date = parseplus.attemptToParse(match[1]);
-					// console.log(['24h parse', match[1], 'into', moment(date).toString()]);
-					if (date) {
-						mo = moment(date);
-					}
-					else {
-						return;
-					}
-				}
-				else {
-					// today plus the given time
-					mo = moment();
-				}
-				if (!match[6] && match[7]) {
-					match[6] = parseplus.tzabbrs[match[7]];
-					match[7] = '';
-				}
-				var parts = [mo.year(), mo.month()+1, mo.date()].concat(match.slice(2));
-				parts[5] = parts[5] || '00';
-				parts[6] = parts[6] || '000';
-				parts.pop(); // remove 9th item
-				return moment(parts.join('|'), 'YYYY|MM|DD|HH|mm|ss|SSS|ZZ');
-			}
-		})
-		// 12-hour time
-		.addParser({
-			name: '12h',
-			//                               $1     $2           $3           $4           $5
-			matcher: parseplus.compile("^(?:(.+) )?(_H12_)(?:\\:(_MIN_)(?:\\:(_SEC_))?)? ?(_AMPM_)$"),
-			handler: function(match) {
-				var date, mo;
-				if (match[1]) {
-					date = parseplus.attemptToParse(match[1]);
-					if (date) {
-						mo = moment(date);
-					}
-					else {
-						return;
-					}
-				}
-				else {
-					// today plus the given time
-					mo = moment();
-				}
-				return moment(
-					[mo.year(), mo.month()+1, mo.date()].concat(match.slice(2)).join(' '),
-					'YYYY MM DD h mm ss a'
-				);
-			}
-		})
-		// date such as "3-15-2010" and "3/15/2010"
-		.addParser({
-			name: 'us',
-			//                            $1       $2        $3      $4
-			matcher: parseplus.compile("^(_MONTH_)([\\/-])(_DAY_)\\2(_YEAR_)$"),
-			format: 'MM * DD YYYY'
-		})
-		// date such as "3-15" and "3/15"
-		.addParser({
-			name: 'us-yearless',
-			//                            $1             $2
-			matcher: parseplus.compile("^(_MONTH_)[\\/-](_DAY_)$"),
-			handler: function(match) {
-				return moment(
-					[match[1], match[2], parseplus.currentYear].join(' '),
-					'MM DD YYYY'
-				);
-			}
-		})
-		// date such as "15.03.2010" and "15/3/2010"
-		.addParser({
-			name: 'world',
-			//                            $1     $2        $3          $4
-			matcher: parseplus.compile("^(_DAY_)([\\/\\.])(_MONTH_)\\2(_YEAR_)$"),
-			format: 'DD * MM YYYY'
-		})
-		// date such as "15.03" and "15/3"
-		.addParser({
-			name: 'world-yearless',
-			//                            $1             $2
-			matcher: parseplus.compile("^(_DAY_)[\\/\\.](_MONTH_)$"),
-			handler: function(match) {
-				return moment(
-					[match[1], match[2], parseplus.currentYear].join(' '),
-					'DD MM YYYY'
-				);
-			}
-		})
-		// date such as "15-Mar-2010", "8 Dec 2011", "Thu, 8 Dec 2011"
-		.addParser({
-			name: 'rfc-2822',
-			//                                                 $1                   $2                    $3
-			matcher: parseplus.compile("^(?:(?:_DAYNAME_),? )?(_DAY_)(?:_ORDINAL_)?([ -])(_MONTHNAME_)\\2(_YEAR_)$"),
-			format: 'DD * MMM YYYY'
-		})
-		// date such as "15-Mar", "8 Dec", "Thu, 8 Dec"
-		.addParser({
-			name: 'rfc-2822-yearless',
-			//                                                 $1                       $2
-			matcher: parseplus.compile("^(?:(?:_DAYNAME_),? )?(_DAY_)(?:_ORDINAL_)?[ -](_MONTHNAME_)$"),
-			handler: function(match) {
-				return moment(
-					[match[1], match[2], parseplus.currentYear].join(' '),
-					'DD MMM YYYY'
-				);
-			}
-		})
-		// date such as "March 4, 2012", "Mar 4 2012", "Sun Mar 4 2012"
-		.addParser({
-			name: 'conversational',
-			//                                                 $1            $2                      $3
-			matcher: parseplus.compile("^(?:(?:_DAYNAME_),? )?(_MONTHNAME_) (_DAY_)(?:_ORDINAL_)?,? (_YEAR_)$"),
-			replacer: '$1 $2 $3',
-			format: 'MMM DD YYYY'
-		})
-		// date such as "March 4", "Mar 4", "Sun Mar 4"
-		.addParser({
-			name: 'conversational-yearless',
-			//                                                 $1            $2
-			matcher: parseplus.compile("^(?:(?:_DAYNAME_),? )?(_MONTHNAME_) (_DAY_)(?:_ORDINAL_)?$"),
-			handler: function (match) {
-				return moment(
-					[match[1], match[2], parseplus.currentYear].join(' '),
-					'MMM DD YYYY'
-				);
-			}
-		})
-		// date such as "Tue Jun 22 17:47:27 +0000 2010"
-		.addParser({
-			name: 'twitter',
-			//                                          $1            $2      $3         $4      $5          $6           $7
-			matcher: parseplus.compile("^(?:_DAYNAME_) (_MONTHNAME_) (_DAY_) (_H24_)?\\:(_MIN_)?(\\:_SEC_)? (_TIMEZONE_) (_YEAR_)$"),
-			format: 'MMM DD HH mm ss ZZ YYYY'
-		})
-		.addParser({
-			name: 'ago',
-			matcher: parseplus.compile("^([\\d.]+) (_UNIT_)s? ago$"),
-			handler: function(match) {
-				return moment().subtract(parseFloat(match[1]), match[2]);
-			}
-		})
-		.addParser({
-			name: 'in',
-			matcher: parseplus.compile("^in ([\\d.]+) (_UNIT_)s?$"),
-			handler: function(match) {
-				return moment().add(parseFloat(match[1]), match[2]);
-			}
-		})
-		.addParser({
-			name: 'today',
-			matcher: /^(today|now|tomorrow|yesterday)/i,
-			handler: function(match) {
-				switch (match[1].toLowerCase()) {
-					case 'today':
-					case 'now':
-						return moment();
-					case 'tomorrow':
-						return moment().add(1, 'day');
-					case 'yesterday':
-						return moment().subtract(1, 'day');
-				}
-			}
-		})
-		.addParser({
-			name: 'plus',
-			matcher: parseplus.compile("^([+-]) ?([\\d.]+) ?(_UNIT_)s?$"),
-			handler: function(match) {
-				var mult = match[1] == '-' ? -1 : 1;
-				return moment().add(mult * parseFloat(match[2]), match[3]);
-			}
-		})
-	;
 
 	return parseplus;
 
