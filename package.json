@@ -21,7 +21,8 @@
     "momentjs",
     "date",
     "parse",
-    "parsing"
+    "parsing",
+    "locale"
   ],
   "author": "Ken Snyder <kendsnyder@gmail.com>",
   "license": "MIT",
