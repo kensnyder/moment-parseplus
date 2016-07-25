@@ -188,6 +188,10 @@ parseplus.removeParser('us');
 - `world` Date such as "15.03.2010" and "15/3/2010"
 - `world-yearless` Date such as "15.03" and "15/3"
 
+### Full Documentation
+
+Full documentation is available [on doclets.io](https://doclets.io/kensnyder/moment-parseplus/master)
+
 ## Testing
 
 After cloning this repo and running `npm install` you can run unit tests
