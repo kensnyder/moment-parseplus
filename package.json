@@ -1,6 +1,6 @@
 {
   "name": "moment-parseplus",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Date parsing plugin for momentjs",
   "main": "parseplus.js",
   "directories": {
@@ -9,12 +9,13 @@
   "scripts": {
     "test": "./node_modules/.bin/mocha --reporter spec",
     "test-browser": "open test/index.html",
+    "watch": "./node_modules/.bin/mocha --reporter dot --watch",
     "coverage": "node ./node_modules/istanbul/lib/cli.js cover node_modules/.bin/_mocha -- -- test/**/*.spec.js",
     "view-coverage": "open ./coverage/lcov-report/index.html"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kensnyder/moparse.git"
+    "url": "git+https://github.com/kensnyder/moment-parseplus.git"
   },
   "keywords": [
     "moment",
