@@ -8,18 +8,36 @@ An extensible date parsing plugin for [momentjs](http://momentjs.com)
 
 ## Purpose
 
-Add support to momentjs for parsing many different date formats with
- the ability to easily add new formats.
+Add support to momentjs for parsing many different date formats with the ability to easily add new formats.
+ 
+## Installation and Usage
 
-## Usage
+#### Node/CommonJS
 
-Include moment-parseplus and pass a supported date to momentjs.
+Use npm to install moment-parseplus and require it. Be sure to require moment sometime before requiring moment-parseplus. Then just pass a supported date string to `moment()`.
+
+```
+npm install moment-parseplus --save
+```
 
 ```js
 var moment = require('moment');
 require('moment-parseplus');
 
 var date = moment('March 5th, 2016');
+```
+
+#### Browser
+
+Download and save [parseplus.js](https://raw.githubusercontent.com/kensnyder/moment-parseplus/master/parseplus.js) from GitHub.
+Include moment.js and then parseplus.js from the appropriate path. Then just pass a supported date string to `moment()`.
+
+```
+<script src="moment.js"></script>
+<script src="moment-parseplus.js"></script>
+<script>
+	var date = moment('March 5th, 2016');
+</script>
 ```
 
 ## Supported format examples
