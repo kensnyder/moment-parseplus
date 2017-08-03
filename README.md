@@ -1,8 +1,8 @@
 # moment-parseplus
 
-[![Build Status](https://travis-ci.org/kensnyder/moment-parseplus.svg?branch=master&v=1.0.2)](https://travis-ci.org/kensnyder/moment-parseplus)
-[![Code Coverage](https://codecov.io/gh/kensnyder/moment-parseplus/branch/master/graph/badge.svg?v=1.0.2)](https://codecov.io/gh/kensnyder/moment-parseplus)
-[![MIT License](https://img.shields.io/npm/l/express.svg?v=1.0.2)](https://opensource.org/licenses/MIT)
+[![Build Status](https://travis-ci.org/kensnyder/moment-parseplus.svg?branch=master&v=1.0.3)](https://travis-ci.org/kensnyder/moment-parseplus)
+[![Code Coverage](https://codecov.io/gh/kensnyder/moment-parseplus/branch/master/graph/badge.svg?v=1.0.3)](https://codecov.io/gh/kensnyder/moment-parseplus)
+[![MIT License](https://img.shields.io/npm/l/express.svg?v=1.0.3)](https://opensource.org/licenses/MIT)
 
 An extensible date parsing plugin for [momentjs](http://momentjs.com)
 
