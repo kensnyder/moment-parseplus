@@ -18,5 +18,11 @@ describe("conversational-yearless date parser", function() {
 	it("should parse dates like `Sun, Mar 14`", function () {
 		expect(moment('Sun, Mar 14').format('M D YYYY')).to.equal(march14th);
 	});
+	it("should parse dates like `Sun, Mar. 14`", function () {
+		expect(moment('Sun, Mar. 14').format('M D YYYY')).to.equal(march14th);
+	});
+	it("should parse dates like `Sun., Mar 14`", function () {
+		expect(moment('Sun., Mar 14').format('M D YYYY')).to.equal(march14th);
+	});
 
 });

@@ -134,16 +134,22 @@
 	 * Update all the parser regexes with new locale data
 	 */
 	parseplus.updateMatchers = function() {
-		parseplus.regexes.MONTHNAME = moment.months().join('|') + '|' + moment.monthsShort().join('|');
-		parseplus.regexes.DAYNAME = moment.weekdays().join('|') + '|' + moment.weekdaysShort().join('|');
-		var localeData = moment.localeData();
-		parseplus.regexes.AMPM = localeData._config.meridiemParse.source;
-		parseplus.regexes.ORDINAL = localeData._config.ordinalParse.source.replace(/.*\(([^)]+)\).*/, '$1');
-		parseplus.parsers.forEach(function(parser) {
-			if (parser.template) {
-				parser.matcher = parseplus.compile(parser.template);
-			}
-		});
+		try {
+			parseplus.regexes.MONTHNAME = moment.months().join('|') + '|' + moment.monthsShort().join('|');
+			parseplus.regexes.DAYNAME = moment.weekdays().join('|') + '|' + moment.weekdaysShort().join('|');
+			var config = moment.localeData()._config;
+			parseplus.regexes.AMPM = config.meridiemParse.source;
+			var ordinalParse = config.ordinalParse || config.dayOfMonthOrdinalParse;
+			parseplus.regexes.ORDINAL = ordinalParse.source.replace(/.*\(([^)]+)\).*/, '$1');
+			parseplus.parsers.forEach(function (parser) {
+				if (parser.template) {
+					parser.matcher = parseplus.compile(parser.template);
+				}
+			});
+		}
+		catch (e) {
+			// moment has changed its internal handling of localeData
+		}
 	};
 
 	/**
@@ -315,15 +321,15 @@
 		// date such as "15-Mar-2010", "8 Dec 2011", "Thu, 8 Dec 2011"
 		.addParser({
 			name: 'rfc-2822',
-			//                                $1                   $2                    $3
-			template: "^(?:(?:_DAYNAME_),? )?(_DAY_)(?:_ORDINAL_)?([ -])(_MONTHNAME_)\\2(_YEAR_)$",
+			//                                    $1                   $2                        $3
+			template: "^(?:(?:_DAYNAME_)\\.?,? )?(_DAY_)(?:_ORDINAL_)?([ -])(_MONTHNAME_)\\.?\\2(_YEAR_)$",
 			format: 'DD * MMM YYYY'
 		})
 		// date such as "15-Mar", "8 Dec", "Thu, 8 Dec"
 		.addParser({
 			name: 'rfc-2822-yearless',
-			//                                $1                       $2
-			template: "^(?:(?:_DAYNAME_),? )?(_DAY_)(?:_ORDINAL_)?[ -](_MONTHNAME_)$",
+			//                                    $1                       $2
+			template: "^(?:(?:_DAYNAME_)\\.?,? )?(_DAY_)(?:_ORDINAL_)?[ -](_MONTHNAME_)\\.?$",
 			handler: function(match) {
 				return moment(
 					[match[1], match[2], new Date().getFullYear()].join(' '),
@@ -334,16 +340,16 @@
 		// date such as "March 4, 2012", "Mar 4 2012", "Sun Mar 4 2012"
 		.addParser({
 			name: 'conversational',
-			//                                $1            $2                      $3
-			template: "^(?:(?:_DAYNAME_),? )?(_MONTHNAME_) (_DAY_)(?:_ORDINAL_)?,? (_YEAR_)$",
+			//                                    $1                $2                      $3
+			template: "^(?:(?:_DAYNAME_)\\.?,? )?(_MONTHNAME_)\\.? (_DAY_)(?:_ORDINAL_)?,? (_YEAR_)$",
 			replacer: '$1 $2 $3',
 			format: 'MMM DD YYYY'
 		})
 		// date such as "March 4", "Mar 4", "Sun Mar 4"
 		.addParser({
 			name: 'conversational-yearless',
-			//                                $1            $2
-			template: "^(?:(?:_DAYNAME_),? )?(_MONTHNAME_) (_DAY_)(?:_ORDINAL_)?$",
+			//                                    $1                $2
+			template: "^(?:(?:_DAYNAME_)\\.?,? )?(_MONTHNAME_)\\.? (_DAY_)(?:_ORDINAL_)?$",
 			handler: function (match) {
 				return moment(
 					[match[1], match[2], new Date().getFullYear()].join(' '),
@@ -354,8 +360,8 @@
 		// date such as "Tue Jun 22 17:47:27 +0000 2010"
 		.addParser({
 			name: 'twitter',
-			//                         $1            $2      $3         $4      $5          $6           $7
-			template: "^(?:_DAYNAME_) (_MONTHNAME_) (_DAY_) (_H24_)?\\:(_MIN_)?(\\:_SEC_)? (_TIMEZONE_) (_YEAR_)$",
+			//                             $1                   $2      $3         $4      $5          $6           $7
+			template: "^(?:_DAYNAME_)\\.? (_MONTHNAME_)\\.?\.? (_DAY_) (_H24_)?\\:(_MIN_)?(\\:_SEC_)? (_TIMEZONE_) (_YEAR_)$",
 			format: 'MMM DD HH mm ss ZZ YYYY'
 		})
 		.addParser({
@@ -613,70 +619,3 @@
 	return parseplus;
 
 }));
-//
-// // RFC-2616
-// //
-//
-// Date.create.patterns = [
-//
-// 	// 2 weeks after today, 3 months after 3-5-2008
-// 	[
-// 		'weeks_months_before_after',
-// 		Date.create.makePattern("^(\\d+) (_UNIT_)s? (before|from|after) (.+)$"),
-// 		function(match) {
-// 			var fromDate = Date.create(match[4]);
-// 			if (fromDate instanceof Date) {
-// 				return fromDate.add((match[3].toLowerCase() == 'before' ? -1 : 1) * match[1], match[2]);
-// 			}
-// 			return false;
-// 		}
-// 	],
-//
-//
-// 	// this/next/last january, next thurs
-// 	[
-// 		'this_next_last',
-// 		Date.create.makePattern("^(this|next|last) (?:(_UNIT_)s?|(_MONTHNAME_)|(_DAYNAME_))$"),
-// 		function(match) {
-// 			// $1 = this/next/last
-// 			var multiplier = match[1].toLowerCase() == 'last' ? -1 : 1;
-// 			var now = Date.current();
-// 			var i;
-// 			var diff;
-// 			var month;
-// 			var weekday;
-// 			// $2 = interval name
-// 			if (match[2]) {
-// 				return now.add(multiplier, match[2]);
-// 			}
-// 			// $3 = month name
-// 			else if (match[3]) {
-// 				month = Date.getMonthByName(match[3]) - 1;
-// 				diff = 12 - (now.getMonth() - month);
-// 				diff = diff > 12 ? diff - 12 : diff;
-// 				return now.add(multiplier * diff, 'month');
-// 			}
-// 			// $4 = weekday name
-// 			else if (match[4]) {
-// 				weekday = Date.getWeekdayByName(match[4]);
-// 				diff = now.getDay() - weekday + 7;
-// 				return now.add(multiplier * (diff == 0 ? 7 : diff), 'day');
-// 			}
-// 			return false;
-// 		}
-// 	],
-//
-// 	// January 4th, July the 4th
-// 	[
-// 		'conversational_sans_year',
-// 		Date.create.makePattern("^(_MONTHNAME_) (?:the )?(\\d+)(?:st|nd|rd|th)?$"),
-// 		function(match) {
-// 			var d = Date.current();
-// 			if (match[1]) {
-// 				d.setMonth( Date.getMonthByName(match[1]) - 1 );
-// 			}
-// 			d.setDate(match[2]);
-// 			return d;
-// 		}
-// 	]
-// ];

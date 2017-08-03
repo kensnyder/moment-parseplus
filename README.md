@@ -79,6 +79,7 @@ Include moment.js and then parseplus.js from the appropriate path. Then just pas
 - March 25, 2016
 - 25th of March, 2016
 - Mar 25 2016
+- Mar. 25, 2016
 - Mar 25
 - 25 Mar 2016
 - 25 Mar 16
