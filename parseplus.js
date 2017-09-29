@@ -400,6 +400,27 @@
 				var mult = match[1] == '-' ? -1 : 1;
 				return moment().add(mult * parseFloat(match[2]), match[3]);
 			}
+		}),
+		.addParser({
+			name: 'firstlastdayof',
+			matcher: /^(first|last) day of (last|this|next) (month|year)/i,
+			handler: function(match) {
+				var date = moment();
+				switch (match[2].toLowerCase()) {
+					case "last":
+						date = date.subtract(1, match[3].toLowerCase());
+						break;
+					case "next":
+						date = date.add(1, match[3].toLowerCase());
+						break;
+				}
+				switch (match[1].toLowerCase()) {
+					case "first":
+						return date.startOf(match[3].toLowerCase());
+					case "last":
+						return date.endOf(match[3].toLowerCase());
+				}
+			}
 		})
 	;
 
