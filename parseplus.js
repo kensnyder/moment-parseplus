@@ -401,6 +401,26 @@
 				return moment().add(mult * parseFloat(match[2]), match[3]);
 			}
 		})
+		.addParser({
+			name: 'firstlastdayof',
+			matcher: /^(first|last) day of (last|this|next) (month|year)/i,
+			handler: function(match) {
+				var firstlast = match[1].toLowerCase();
+				var lastnext = match[2].toLowerCase();
+				var monthyear = match[3].toLowerCase();
+				var date = moment();
+				if (lastnext == 'last') {
+					date.subtract(1, monthyear);
+				}
+				else if (lastnext == 'next') {
+					date.add(1, monthyear);
+				}
+				if (firstlast == 'first') {
+					return date.startOf(monthyear);
+				}
+				return date.endOf(monthyear);
+			}
+		})
 	;
 
 	/**
