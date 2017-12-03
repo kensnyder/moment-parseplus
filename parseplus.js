@@ -403,7 +403,7 @@
 		})
 		.addParser({
 			name: 'firstlastdayof',
-			matcher: /^(first|last) day of (last|this|next) (month|year)/i,
+			matcher: /^(first|last) day of (last|this|the|next) (week|month|year)/i,
 			handler: function(match) {
 				var firstlast = match[1].toLowerCase();
 				var lastnext = match[2].toLowerCase();
