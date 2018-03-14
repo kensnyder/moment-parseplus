@@ -1,5 +1,9 @@
 ## Change Log
 
+### v1.1.1 on 2018-03-14
+
+- Updated dependencies and tested working with moment 2.21
+
 ### v1.1.0 on 2017-12-02
 
 - Added first day / last day parser (thanks to @Claymm for PR)

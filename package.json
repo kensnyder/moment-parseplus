@@ -1,6 +1,6 @@
 {
   "name": "moment-parseplus",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Date parsing plugin for momentjs",
   "main": "parseplus.js",
   "directories": {
@@ -33,7 +33,7 @@
   },
   "homepage": "https://github.com/kensnyder/moment-parseplus#readme",
   "dependencies": {
-    "moment": "^2.6.0"
+    "moment": "^2.21.0"
   },
   "devDependencies": {
     "chai": "^4.1.2",
