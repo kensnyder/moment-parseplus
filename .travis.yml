@@ -1,12 +1,12 @@
 language: node_js
 node_js:
-  - "6"
+  - "8"
 after_success:
   - bash <(curl -s https://codecov.io/bash)
 install:
   - npm install
   - npm install -g codecov
 script:
-  - node ./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha --report lcovonly -- test/**/*.spec.js
+  - npm run coverage
   - codecov
 
