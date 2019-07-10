@@ -1,8 +1,19 @@
 ## Change Log
 
+### v1.1.3 on 2018-07-10
+
+- Updated dependencies and tested working with moment 2.24
+- Switch from istanbul to nyc
+
+### v1.1.2 on 2018-09-21
+
+- Updated dependencies and tested working with moment 2.21
+- Support timezone abbreviations in parentheses following timezone offset; e.g. `GMT+0000 (UTC)` 
+
 ### v1.1.1 on 2018-03-14
 
 - Updated dependencies and tested working with moment 2.21
+- Updated unit tests to allow for daylight savings change
 
 ### v1.1.0 on 2017-12-02
 

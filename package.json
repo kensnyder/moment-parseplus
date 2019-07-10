@@ -1,18 +1,17 @@
 {
   "name": "moment-parseplus",
-  "version": "1.1.1",
+  "version": "1.1.3",
   "description": "Date parsing plugin for momentjs",
   "main": "parseplus.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "test": "./node_modules/.bin/mocha --reporter spec",
+    "test": "npx mocha --reporter spec",
     "test-browser": "open test/index.html",
-    "watch": "./node_modules/.bin/mocha --reporter dot --watch",
-    "coverage": "node ./node_modules/istanbul/lib/cli.js cover node_modules/.bin/_mocha -- -- test/**/*.spec.js",
-    "view-coverage": "open ./coverage/lcov-report/index.html",
-    "clean-install": "rm -Rf node_modules && npm install"
+    "watch": "npx mocha --reporter dot --watch",
+    "coverage": "npx nyc mocha --include=test/**/*.spec.js && npx nyc report --reporter=lcov",
+    "view-coverage": "open ./coverage/lcov-report/index.html"
   },
   "repository": {
     "type": "git",
@@ -33,12 +32,12 @@
   },
   "homepage": "https://github.com/kensnyder/moment-parseplus#readme",
   "dependencies": {
-    "moment": "^2.21.0"
+    "moment": "^2.24.0"
   },
   "devDependencies": {
-    "chai": "^4.1.2",
-    "istanbul": "^0.4.5",
-    "mocha": "^2.5.3",
-    "requirejs": "^2.3.5"
+    "chai": "^4.2.0",
+    "mocha": "^6.1.4",
+    "nyc": "^14.1.1",
+    "requirejs": "^2.3.6"
   }
 }

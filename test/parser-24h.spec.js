@@ -30,6 +30,10 @@ describe("24h date parser", function() {
 		var input = '4.3.2012 20:42:42 GMT+0000';
 		expect(moment(input).format()).to.equal(moment(input, 'D.M.YYYY HH:mm:ss Z').format());
 	});
+	it("should parse times like `4.3.2012 20:42:42 GMT+0000 (UTC)`", function () {
+		var input = '4.3.2012 20:42:42 GMT+0000 (UTC)';
+		expect(moment(input).format()).to.equal(moment(input, 'D.M.YYYY HH:mm:ss Z').format());
+	});
 	it("should parse times like `March 24th, 2012 20:42:42 GMT+00:00`", function () {
 		var input = 'March 24th, 2012 20:42:42 GMT+00:00';
 		expect((+moment(input)-+moment(input, 'MMM DD, YYYY HH:mm:ss ZZ'))/1000/3600).to.be.closeTo(0, 100);

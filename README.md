@@ -1,8 +1,8 @@
 # moment-parseplus
 
-[![Build Status](https://travis-ci.org/kensnyder/moment-parseplus.svg?branch=master&v=1.1.1)](https://travis-ci.org/kensnyder/moment-parseplus)
-[![Code Coverage](https://codecov.io/gh/kensnyder/moment-parseplus/branch/master/graph/badge.svg?v=1.1.1)](https://codecov.io/gh/kensnyder/moment-parseplus)
-[![MIT License](https://img.shields.io/npm/l/express.svg?v=1.1.1)](https://opensource.org/licenses/MIT)
+[![Build Status](https://travis-ci.org/kensnyder/moment-parseplus.svg?branch=master&v=1.1.3)](https://travis-ci.org/kensnyder/moment-parseplus)
+[![Code Coverage](https://codecov.io/gh/kensnyder/moment-parseplus/branch/master/graph/badge.svg?v=1.1.3)](https://codecov.io/gh/kensnyder/moment-parseplus)
+[![MIT License](https://img.shields.io/npm/l/express.svg?v=1.1.3)](https://opensource.org/licenses/MIT)
 
 An extensible date parsing plugin for [momentjs](http://momentjs.com)
 
@@ -53,6 +53,8 @@ Include moment.js and then parseplus.js from the appropriate path. Then just pas
 - 22:00:00.000
 - 22:00:00
 - 22:00
+- 20:42:42 GMT+0000
+- 20:42:42 GMT+0000 (UTC)
 
 #### US Short Date
 - 03/25/2016
