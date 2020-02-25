@@ -1,5 +1,10 @@
 ## Change Log
 
+### v1.1.4 on 2020-02-25
+
+- Updated dependencies
+- Fixed npm audit warnings
+
 ### v1.1.3 on 2018-07-10
 
 - Updated dependencies and tested working with moment 2.24
@@ -8,7 +13,7 @@
 ### v1.1.2 on 2018-09-21
 
 - Updated dependencies and tested working with moment 2.21
-- Support timezone abbreviations in parentheses following timezone offset; e.g. `GMT+0000 (UTC)` 
+- Support timezone abbreviations in parentheses following timezone offset; e.g. `GMT+0000 (UTC)`
 
 ### v1.1.1 on 2018-03-14
 
