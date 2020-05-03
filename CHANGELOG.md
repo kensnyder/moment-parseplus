@@ -1,5 +1,11 @@
 ## Change Log
 
+### v1.1.5 on 2020-05-03
+
+- Updated dependencies
+- Changed README code examples to use const instead of var
+- Remove link to defunct doclets.io
+
 ### v1.1.4 on 2020-02-25
 
 - Updated dependencies

@@ -21,10 +21,10 @@ npm install moment-parseplus --save
 ```
 
 ```js
-var moment = require('moment');
+const moment = require('moment');
 require('moment-parseplus');
 
-var date = moment('March 5th, 2016');
+const date = moment('March 5th, 2016');
 ```
 
 #### Browser
@@ -139,7 +139,7 @@ interpret the pattern matches returned by the `matcher`.
 ### Replacer Example
 
 ```js
-var parseplus = require('moment-parseplus');
+const parseplus = require('moment-parseplus');
 
 parseplus.addParser({
 	name: 'clicks',
@@ -157,13 +157,13 @@ a date object or a moment object. Two examples are below.
 #### Return a date object
 
 ```js
-var parseplus = require('moment-parseplus');
+const parseplus = require('moment-parseplus');
 
 parseplus.addParser({
 	name: 'yesteryear',
 	matcher: /^yesteryear$/,
 	handler: function(match) {
-		var date = new Date();
+		const date = new Date();
 		return new Date(-1*365*24*60*60*1000 + date);
 	}
 });
@@ -172,7 +172,7 @@ parseplus.addParser({
 #### Return a moment object
 
 ```js
-var parseplus = require('moment-parseplus');
+const parseplus = require('moment-parseplus');
 
 parseplus.addParser({
 	name: 'nights',
@@ -188,7 +188,7 @@ parseplus.addParser({
 To remove support for a certain parsing rule, use `removeParser()`
 
 ```js
-var parseplus = require('moment-parseplus');
+const parseplus = require('moment-parseplus');
 
 parseplus.removeParser('us');
 ```
@@ -210,10 +210,6 @@ parseplus.removeParser('us');
 - `us-yearless` Date such as "3-15" and "3/15"
 - `world` Date such as "15.03.2010" and "15/3/2010"
 - `world-yearless` Date such as "15.03" and "15/3"
-
-### Full Documentation
-
-Full documentation is available [on doclets.io](https://doclets.io/kensnyder/moment-parseplus/master)
 
 ## Testing
 
