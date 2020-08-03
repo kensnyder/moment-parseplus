@@ -1,5 +1,9 @@
 ## Change Log
 
+### v1.1.6 on 2020-08-03
+
+- Updated dependencies
+
 ### v1.1.5 on 2020-05-03
 
 - Updated dependencies

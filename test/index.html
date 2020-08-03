@@ -20,8 +20,8 @@
 			'chai',
 			'moment',
 			'../parseplus.js'
-		], function() {
-			window.mocha.setup('bdd');
+		], function(mocha) {
+			mocha.setup('bdd');
 			require([
 				'./extending.spec.js',
 				'./internals.spec.js',
@@ -42,7 +42,7 @@
 				'./parser-world.spec.js',
 				'./parser-world-yearless.spec.js'
 			], function() {
-				window.mocha.run();
+				mocha.run();
 			});
 
 		});
