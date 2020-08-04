@@ -419,6 +419,21 @@
 					return date.startOf(monthyear);
 				}
 				return date.endOf(monthyear);
+				
+			}
+		})
+	    .addParser({
+	    	name: 'startOfNTimeAgo',
+  			template: "^(start|end) of ([\\d]+) ([_UNIT_]+) ago$",
+  			handler: function(match) {
+				var n = match[2];
+				var unit = match[3].toLowerCase();
+				var startOrEnd = match[1].toLowerCase();
+  				var date = moment().subtract(parseFloat(n), unit);
+				if(startOrEnd === 'start') {
+					return date.startOf(unit);
+				}
+				return date.endOf(unit);			
 			}
 		})
 	;
