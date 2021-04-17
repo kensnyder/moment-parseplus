@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
 
 path="$(dirname "$(which node)")"/../lib/node_modules/full-icu
-if [[ ! -d "$path" ]]
+if [ ! -d "$path" ]
 then
   echo "Attempting to globally install full-icu with npm for i18n tests..."
   echo "npm install -g full-icu"
   npm install -g full-icu
 fi
 
-if [[ -d "$path" ]]
+if [ -d "$path" ]
 then
   export NODE_ICU_DATA="$path"
 fi
 
-if [[ -n "$NODE_ICU_DATA" ]]
+if [ -n "$NODE_ICU_DATA" ]
 then
   TZ=UTC npx jest "$@"
 else
