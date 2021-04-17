@@ -1,6 +1,28 @@
 const moment = require('moment');
 const parser = require('any-date-parser');
 
+/**
+ * Define the function moment uses to fallback to other formats
+ * @param {Object} config  The config object with info on the input
+ */
+moment.createFromInputFallback = function (config) {
+	const date = Date.fromString(config._i, moment.locale());
+	if (date instanceof Date) {
+		config._d = date;
+	} else {
+		config._isValid = false;
+	}
+};
+
+/*
+ * Add a new parser that handles phrases such as
+ * - first day of this month
+ * - last day of next month
+ * - first day of this week
+ * - last day of last week
+ * - first day of the year
+ * - last day of last year
+ */
 parser.addFormat(
 	new parser.Format({
 		matcher: /^(first|last) day of (last|this|the|next) (week|month|year)/i,
@@ -35,14 +57,5 @@ parser.addFormat(
 		},
 	})
 );
-
-moment.createFromInputFallback = function (config) {
-	const date = Date.fromString(config._i, moment.locale());
-	if (date instanceof Date) {
-		config._d = date;
-	} else {
-		config._isValid = false;
-	}
-};
 
 module.exports = parser;
