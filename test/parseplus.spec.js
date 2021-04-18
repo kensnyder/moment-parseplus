@@ -83,3 +83,32 @@ describe('y-m-d parser', () => {
 		expect(actual.format()).toEqual(expected.format());
 	});
 });
+
+describe('i18n parsing', () => {
+	it('should handle french', () => {
+		moment.locale('fr-FR');
+		const actual = moment('24 août 2020');
+		const expected = moment({
+			year: 2020,
+			month: 7,
+			day: 24,
+			hour: 0,
+			minute: 0,
+			second: 0,
+		});
+		expect(actual.format()).toEqual(expected.format());
+	});
+	it('should handle russian', () => {
+		moment.locale('ru-RU');
+		const actual = moment('28 февраля 2021');
+		const expected = moment({
+			year: 2021,
+			month: 1,
+			day: 28,
+			hour: 0,
+			minute: 0,
+			second: 0,
+		});
+		expect(actual.format()).toEqual(expected.format());
+	});
+});
