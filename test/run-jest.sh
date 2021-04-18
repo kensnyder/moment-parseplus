@@ -1,12 +1,16 @@
 #!/usr/bin/env bash
 
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+WHITE='\033[0m'
+
 # First ensure that full-icu data is available
 modulesPath="$(dirname "$(which node)")"/../lib/node_modules
 fullIcuPath="$modulesPath/full-icu"
 
 if [ ! -d "$fullIcuPath" ]
 then
-  echo "Attempting to globally install full-icu with npm for i18n unit tests..."
+  echo "${GREEN}Attempting to globally install full-icu with npm for i18n unit tests...${WHITE}"
   echo "npm install -g full-icu"
   npm install -g full-icu
 fi
@@ -21,18 +25,16 @@ then
   # make sure moment is available
   if ! npm list -g | grep -q 'moment'
   then
-    echo "Attempting to globally install moment with npm for unit tests..."
+    echo "${GREEN}Attempting to globally install moment with npm for unit tests...${WHITE}"
     echo "npm install -g moment"
     npm install -g moment
   fi
-  # make moment available
+  # make global moment available to our specs
   export NODE_PATH=$modulesPath
   # set timezone to UTC and run tests
   TZ=UTC npx jest "$@"
 else
   # Failed
-  RED='\033[0;31m'
-  WHITE='\033[0m'
   echo "${RED}We failed to find the full-icu package npm install has failed."
   echo "You need to:"
   echo "  1. Globally install i18n data using npm:"

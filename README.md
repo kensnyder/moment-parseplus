@@ -7,13 +7,13 @@
 
 An extensible date parsing plugin for [momentjs](http://momentjs.com).
 
-_Note: The only breaking change from moment-parseplus 1.x to 2.x is the way you
-add custom formats._
+_Note: The only breaking change from `moment-parseplus` 1.x to 2.x is the way
+you add custom formats._
 
 ## Purpose
 
-Add support to momentjs for parsing many different date formats with the ability
-to easily add new formats.
+Update momentjs to support parsing many different date formats with the ability
+to easily add new formats. Most locales are supported automatically.
 
 ## Installation
 
@@ -27,7 +27,8 @@ npm install moment-parseplus
 const moment = require('moment');
 require('moment-parseplus');
 
-const date = moment('March 5th, 2016');
+const date1 = moment('March 5th, 2016 at 7:05pm');
+const date2 = moment('9 days ago');
 ```
 
 ## Recognized Formats
@@ -46,7 +47,7 @@ const date = moment('March 5th, 2016');
 - now/today/yesterday/tomorrow
 - Twitter
 
-moment-parseplus relies on
+`moment-parseplus` relies on
 [any-date-format](https://www.npmjs.com/package/any-date-parser) which supports
 even more formats. See the
 [exhaustive list](https://www.npmjs.com/package/any-date-parser#exhaustive-list-of-date-formats).
@@ -59,7 +60,7 @@ See
 Example:
 
 ```js
-const parser = require('luxon-parser');
+const parser = require('moment-parseplus');
 
 parser.addFormat(
 	new parser.Format({
@@ -71,6 +72,8 @@ parser.addFormat(
 		},
 	})
 );
+
+console.log(moment('Q4 2020'));
 ```
 
 ## Locale Support
@@ -78,18 +81,18 @@ parser.addFormat(
 The built-in parsers containing month and day names are automatically updated
 when locale is changed using `moment.locale(name)`.
 
-For example, setting locale to french (by including the locale file or calling
+For example, setting locale to French (by including the locale file or calling
 `moment.locale('fr')`), will allow parsing dates such as "15 septembre 2015".
 
 ## What is this sorcery?
 
 moment provides a `moment.createFromInputFallback` method you can define to
-create additional parsing rules. moment-parseplus implements that function and
+create additional parsing rules. `moment-parseplus` implements that function and
 gets invoked when moment fails to parse the given string.
 
 ## Unit Testing
 
-moment-parseplus has 100% code coverage.
+`moment-parseplus` has 100% code coverage.
 
 - To run tests, run `npm test`
 - To check coverage, run `npm run coverage`

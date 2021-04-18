@@ -85,7 +85,7 @@ describe('y-m-d parser', () => {
 });
 
 describe('i18n parsing', () => {
-	it('should handle french', () => {
+	it('should handle French', () => {
 		moment.locale('fr-FR');
 		const actual = moment('24 août 2020');
 		const expected = moment({
@@ -98,13 +98,39 @@ describe('i18n parsing', () => {
 		});
 		expect(actual.format()).toEqual(expected.format());
 	});
-	it('should handle russian', () => {
+	it('should handle Sweedish', () => {
+		moment.locale('sv-SE');
+		const actual = moment('24 augusti 2020');
+		const expected = moment({
+			year: 2020,
+			month: 7,
+			day: 24,
+			hour: 0,
+			minute: 0,
+			second: 0,
+		});
+		expect(actual.format()).toEqual(expected.format());
+	});
+	it('should handle Russian', () => {
 		moment.locale('ru-RU');
 		const actual = moment('28 февраля 2021');
 		const expected = moment({
 			year: 2021,
 			month: 1,
 			day: 28,
+			hour: 0,
+			minute: 0,
+			second: 0,
+		});
+		expect(actual.format()).toEqual(expected.format());
+	});
+	it('should handle German', () => {
+		moment.locale('de');
+		const actual = moment('Dienstag, 22. Januar 2021');
+		const expected = moment({
+			year: 2021,
+			month: 0,
+			day: 22,
 			hour: 0,
 			minute: 0,
 			second: 0,
