@@ -26,8 +26,8 @@ then
   if ! npm list -g | grep -q 'moment'
   then
     echo "${GREEN}Attempting to globally install moment with npm for unit tests...${WHITE}"
-    echo "npm install -g moment"
-    npm install -g moment
+    echo "npm install -g moment@2"
+    npm install -g moment@2
   fi
   # make global moment available to our specs
   export NODE_PATH=$modulesPath

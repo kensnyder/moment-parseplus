@@ -98,7 +98,7 @@ describe('i18n parsing', () => {
 		});
 		expect(actual.format()).toEqual(expected.format());
 	});
-	it('should handle Sweedish', () => {
+	it('should handle Swedish', () => {
 		moment.locale('sv-SE');
 		const actual = moment('24 augusti 2020');
 		const expected = moment({

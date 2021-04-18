@@ -113,8 +113,8 @@ gets invoked when Moment.js fails to parse the given string.
 
 - Standalone Parser:
   [any-date-format](http://npmjs.com/packages/any-date-format)
-- DayJS: [dayjs-parse](http://npmjs.com/package/dayjs-parse)
-- Luxon: [luxon-parse](http://npmjs.com/package/luxon-parse)
+- DayJS: [dayjs-parser](http://npmjs.com/package/dayjs-parser)
+- Luxon: [luxon-parser](http://npmjs.com/package/luxon-parser)
 
 ## Unit Testing
 
