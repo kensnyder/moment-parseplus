@@ -94,6 +94,9 @@ moment-parseplus has 100% code coverage.
 - To run tests, run `npm test`
 - To check coverage, run `npm run coverage`
 
+Unit tests require a global install of `full-icu` and `moment`. The test runner
+will attempt to install these if absent.
+
 ## Contributing
 
 Contributions are welcome. Please open a GitHub ticket for bugs or feature
