@@ -5,15 +5,33 @@
 [![Code Coverage](https://codecov.io/gh/kensnyder/moment-parseplus/branch/master/graph/badge.svg?v=2.0.0)](https://codecov.io/gh/kensnyder/moment-parseplus)
 [![ISC License](https://img.shields.io/npm/l/moment-parseplus.svg?v=2.0.0)](https://opensource.org/licenses/ISC)
 
-An extensible date parsing plugin for [momentjs](http://momentjs.com).
+A comprehensive and extensible date parsing plugin for
+[Moment.js](http://momentjs.com). It allows passing a wide variety of date
+formats to the `moment` constructor. Most locales are supported automatically.
 
 _Note: The only breaking change from `moment-parseplus` 1.x to 2.x is the way
 you add custom formats._
 
-## Purpose
+## Table of Contents
 
-Update momentjs to support parsing many different date formats with the ability
-to easily add new formats. Most locales are supported automatically.
+- [Motivation](#motivation)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Recognized Formats](#recognized-formats)
+- [Adding Custom Formats](#adding-custom-formats)
+- [Locale Support](#locale-support)
+- [What is this sorcery?](#what-is-this-sorcery)
+- [Sister Packages](#sister-packages)
+- [Unit Testing](#unit-testing)
+- [Contributing](#contributing)
+
+## Motivation
+
+1. The APIs I consume have a lot of different date formats
+1. I want to create REST APIs that accept all major formats
+1. I want to handle user-input dates
+1. I want to support dates in other languages according to JavaScript's new
+   `Intl` global object
 
 ## Installation
 
@@ -29,6 +47,7 @@ require('moment-parseplus');
 
 const date1 = moment('March 5th, 2016 at 7:05pm');
 const date2 = moment('9 days ago');
+const date3 = moment('2016-03-05 23:59:59 CST');
 ```
 
 ## Recognized Formats
@@ -86,9 +105,16 @@ For example, setting locale to French (by including the locale file or calling
 
 ## What is this sorcery?
 
-moment provides a `moment.createFromInputFallback` method you can define to
+Moment.js provides a `moment.createFromInputFallback` method you can define to
 create additional parsing rules. `moment-parseplus` implements that function and
-gets invoked when moment fails to parse the given string.
+gets invoked when Moment.js fails to parse the given string.
+
+## Sister Packages
+
+- Standalone Parser:
+  [any-date-format](http://npmjs.com/packages/any-date-format)
+- DayJS: [dayjs-parse](http://npmjs.com/package/dayjs-parse)
+- Luxon: [luxon-parse](http://npmjs.com/package/luxon-parse)
 
 ## Unit Testing
 

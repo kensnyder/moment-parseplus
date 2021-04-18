@@ -35,7 +35,7 @@ then
   TZ=UTC npx jest "$@"
 else
   # Failed
-  echo "${RED}We failed to find the full-icu package npm install has failed."
+  echo "${RED}We failed to find the full-icu package path."
   echo "You need to:"
   echo "  1. Globally install i18n data using npm:"
   echo "     npm install -g full-icu"
