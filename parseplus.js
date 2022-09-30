@@ -58,4 +58,7 @@ parser.addFormat(
 	})
 );
 
+// for convenience, allow importing moment directly
+parser.moment = moment;
+
 module.exports = parser;

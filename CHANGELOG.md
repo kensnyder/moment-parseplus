@@ -1,10 +1,12 @@
 ## Change Log
 
-### v2.0.0 on 2021-04-17
+### v2.0.0 on 2022-09-30
 
 - Depend on [any-date-parser](https://www.npmjs.com/package/any-date-parser) for
   parsing
 - Use jest for unit tests
+- Allow importing `moment` directly from `moment-parseplus`
+- Update all dependencies and npm audit fix
 
 ### v1.1.6 on 2020-08-03
 

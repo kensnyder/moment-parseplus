@@ -10,7 +10,7 @@ A comprehensive and extensible date parsing plugin for
 formats to the `moment` constructor. Most locales are supported automatically.
 
 _Note: The only breaking change from `moment-parseplus` 1.x to 2.x is the way
-you add custom formats._
+you [add custom formats](#adding-custom-formats)._
 
 ## Table of Contents
 
@@ -50,6 +50,14 @@ const date2 = moment('9 days ago');
 const date3 = moment('2016-03-05 23:59:59 CST');
 ```
 
+Or, for convenience, you can just import `moment` from `moment-parseplus`:
+
+```js
+import { moment } from 'moment-parseplus';
+
+const date1 = moment('March 5th, 2016 at 7:05pm');
+```
+
 ## Recognized Formats
 
 - 24 hour time
@@ -67,7 +75,7 @@ const date3 = moment('2016-03-05 23:59:59 CST');
 - Twitter
 
 `moment-parseplus` relies on
-[any-date-format](https://www.npmjs.com/package/any-date-parser) which supports
+[any-date-parser](https://www.npmjs.com/package/any-date-parser) which supports
 even more formats. See the
 [exhaustive list](https://www.npmjs.com/package/any-date-parser#exhaustive-list-of-date-formats).
 
@@ -112,7 +120,7 @@ gets invoked when Moment.js fails to parse the given string.
 ## Sister Packages
 
 - Standalone Parser:
-  [any-date-format](http://npmjs.com/packages/any-date-format)
+  [any-date-parser](http://npmjs.com/packages/any-date-parser)
 - DayJS: [dayjs-parser](http://npmjs.com/package/dayjs-parser)
 - Luxon: [luxon-parser](http://npmjs.com/package/luxon-parser)
 
