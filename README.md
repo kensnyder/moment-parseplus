@@ -1,7 +1,7 @@
 # moment-parseplus
 
 [![NPM Link](https://img.shields.io/npm/v/moment-parseplus?v=2.0.0)](https://npm.com/package/moment-parseplus)
-[![Build Status](https://travis-ci.org/kensnyder/moment-parseplus.svg?branch=master&v=2.0.0)](https://travis-ci.org/kensnyder/moment-parseplus)
+[![Build Status](https://ci.appveyor.com/api/projects/status/github/kensnyder/moment-parseplus?branch=master&svg=true&v=2.0.0)](https://ci.appveyor.com/project/kensnyder/moment-parseplus)
 [![Code Coverage](https://codecov.io/gh/kensnyder/moment-parseplus/branch/master/graph/badge.svg?v=2.0.0)](https://codecov.io/gh/kensnyder/moment-parseplus)
 [![ISC License](https://img.shields.io/npm/l/moment-parseplus.svg?v=2.0.0)](https://opensource.org/licenses/ISC)
 
