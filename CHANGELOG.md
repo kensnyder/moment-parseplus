@@ -7,6 +7,7 @@
 - Use jest for unit tests
 - Allow importing `moment` directly from `moment-parseplus`
 - Update all dependencies and npm audit fix
+- Switch from Travis CI to AppVeyor
 
 ### v1.1.6 on 2020-08-03
 
