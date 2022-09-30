@@ -1,0 +1,24 @@
+# Use generic build mode on Ubuntu
+image: Ubuntu
+build: off
+
+environment:
+  CODECOV_TOKEN: '5b740334-2f37-43a0-a942-9b8566645130'
+
+# Install scripts. (runs after repo cloning)
+install:
+  # install modules
+  - nvm use 16
+  - npm install
+
+# Post-install test scripts.
+test_script:
+  # Output useful info for debugging.
+  - node --version
+  - npm --version
+  # run tests
+  - npm test
+  - npm run coverage
+  - curl -Os https://uploader.codecov.io/latest/linux/codecov
+  - chmod +x codecov
+  - ./codecov -t ${CODECOV_TOKEN}

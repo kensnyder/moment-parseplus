@@ -1,5 +1,14 @@
 ## Change Log
 
+### v2.0.0 on 2022-09-30
+
+- Depend on [any-date-parser](https://www.npmjs.com/package/any-date-parser) for
+  parsing
+- Use jest for unit tests
+- Allow importing `moment` directly from `moment-parseplus`
+- Update all dependencies and npm audit fix
+- Switch from Travis CI to AppVeyor
+
 ### v1.1.6 on 2020-08-03
 
 - Updated dependencies
@@ -23,7 +32,8 @@
 ### v1.1.2 on 2018-09-21
 
 - Updated dependencies and tested working with moment 2.21
-- Support timezone abbreviations in parentheses following timezone offset; e.g. `GMT+0000 (UTC)`
+- Support timezone abbreviations in parentheses following timezone offset; e.g.
+  `GMT+0000 (UTC)`
 
 ### v1.1.1 on 2018-03-14
 

@@ -1,249 +1,141 @@
 # moment-parseplus
 
-[![Build Status](https://travis-ci.org/kensnyder/moment-parseplus.svg?branch=master&v=1.1.6)](https://travis-ci.org/kensnyder/moment-parseplus)
-[![Code Coverage](https://codecov.io/gh/kensnyder/moment-parseplus/branch/master/graph/badge.svg?v=1.1.6)](https://codecov.io/gh/kensnyder/moment-parseplus)
-[![MIT License](https://img.shields.io/npm/l/express.svg?v=1.1.6)](https://opensource.org/licenses/MIT)
+[![NPM Link](https://img.shields.io/npm/v/moment-parseplus?v=2.0.0)](https://npm.com/package/moment-parseplus)
+[![Build Status](https://travis-ci.org/kensnyder/moment-parseplus.svg?branch=master&v=2.0.0)](https://travis-ci.org/kensnyder/moment-parseplus)
+[![Code Coverage](https://codecov.io/gh/kensnyder/moment-parseplus/branch/master/graph/badge.svg?v=2.0.0)](https://codecov.io/gh/kensnyder/moment-parseplus)
+[![ISC License](https://img.shields.io/npm/l/moment-parseplus.svg?v=2.0.0)](https://opensource.org/licenses/ISC)
 
-An extensible date parsing plugin for [momentjs](http://momentjs.com)
+A comprehensive and extensible date parsing plugin for
+[Moment.js](http://momentjs.com). It allows passing a wide variety of date
+formats to the `moment` constructor. Most locales are supported automatically.
 
-## Purpose
+_Note: The only breaking change from `moment-parseplus` 1.x to 2.x is the way
+you [add custom formats](#adding-custom-formats)._
 
-Add support to momentjs for parsing many different date formats with the ability to easily add new formats.
+## Table of Contents
 
-## Installation and Usage
+- [Motivation](#motivation)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Recognized Formats](#recognized-formats)
+- [Adding Custom Formats](#adding-custom-formats)
+- [Locale Support](#locale-support)
+- [What is this sorcery?](#what-is-this-sorcery)
+- [Sister Packages](#sister-packages)
+- [Unit Testing](#unit-testing)
+- [Contributing](#contributing)
 
-#### Node/CommonJS
+## Motivation
 
-Use npm to install moment-parseplus and require it. Be sure to require moment sometime before requiring moment-parseplus. Then just pass a supported date string to `moment()`.
+1. The APIs I consume have a lot of different date formats
+1. I want to create REST APIs that accept all major formats
+1. I want to handle user-input dates
+1. I want to support dates in other languages according to JavaScript's new
+   `Intl` global object
 
+## Installation
+
+```bash
+npm install moment-parseplus
 ```
-npm install moment-parseplus --save
-```
+
+## Usage
 
 ```js
 const moment = require('moment');
 require('moment-parseplus');
 
-const date = moment('March 5th, 2016');
+const date1 = moment('March 5th, 2016 at 7:05pm');
+const date2 = moment('9 days ago');
+const date3 = moment('2016-03-05 23:59:59 CST');
 ```
 
-#### Browser
+Or, for convenience, you can just import `moment` from `moment-parseplus`:
 
-Download and save [parseplus.js](https://raw.githubusercontent.com/kensnyder/moment-parseplus/master/parseplus.js) from GitHub.
-Include moment.js and then parseplus.js from the appropriate path. Then just pass a supported date string to `moment()`.
+```js
+import { moment } from 'moment-parseplus';
 
-```
-<script src="moment.js"></script>
-<script src="moment-parseplus.js"></script>
-<script>
-	var date = moment('March 5th, 2016');
-</script>
+const date1 = moment('March 5th, 2016 at 7:05pm');
 ```
 
-## Supported format examples
+## Recognized Formats
 
-#### 12- and 24-hour Time _(preceded by any date format)_
-- 8:00:00 pm
-- 08:00p.m.
-- 8:00pm
-- 8:00p
-- 8:00am
-- 8:00a
-- 8am
-- 22:00:00.000
-- 22:00:00
-- 22:00
-- 20:42:42 GMT+0000
-- 20:42:42 GMT+0000 (UTC)
+- 24 hour time
+- 12 hour time
+- timezone offsets
+- timezone abbreviations
+- year month day
+- year monthname day
+- month day year
+- monthname day year
+- day month year
+- day monthname year
+- +/-/ago periods
+- now/today/yesterday/tomorrow
+- Twitter
 
-#### US Short Date
-- 03/25/2016
-- 03/25/16
-- 3/25/2016
-- 3/25/16
-- 03/25
-- 3/25
-- 03-25-2016
-- 03-25-16
-- 3-25-2016
-- 3-25-16
-- 03-25
-- 3-25
+`moment-parseplus` relies on
+[any-date-parser](https://www.npmjs.com/package/any-date-parser) which supports
+even more formats. See the
+[exhaustive list](https://www.npmjs.com/package/any-date-parser#exhaustive-list-of-date-formats).
 
-#### World Short Date
-- 25.03.2016
-- 25.03.16
-- 25.3.2016
-- 25.3.16
-- 25.3
+## Adding Custom Formats
 
-#### Named Month
-- March 25, 2016
-- 25th of March, 2016
-- Mar 25 2016
-- Mar. 25, 2016
-- Mar 25
-- 25 Mar 2016
-- 25 Mar 16
-- 25 Mar
-- 25-Mar-2016
-- 25-Mar-16
-- 25-Mar
+See
+[any-date-format's instructions](https://www.npmjs.com/package/any-date-parser#adding-custom-formats).
 
-#### Calculated
-- +5 hours
-- -2 weeks
-- +8day
-- 3 months ago
-- in 6 hours
-- first day of last month
-- last day of next month
-- etc.
+Example:
 
-#### Keyword
-- now
-- today
-- tomorrow
-- yesterday
+```js
+const parser = require('moment-parseplus');
 
-#### Twitter
-- Tue Jun 22 17:47:27 +0000 2010
+parser.addFormat(
+	new parser.Format({
+		matcher: /^Q([1-4]) (\d{4})$/,
+		handler: function ([, quarter, year]) {
+			const monthByQuarter = { 1: 1, 2: 4, 3: 7, 4: 10 };
+			const month = monthByQuarter[quarter];
+			return { year, month };
+		},
+	})
+);
+
+console.log(moment('Q4 2020'));
+```
 
 ## Locale Support
 
-The built-in parsers containing month and day names are automatically
-updated when locale is changed using `moment.locale(name)`.
+The built-in parsers containing month and day names are automatically updated
+when locale is changed using `moment.locale(name)`.
 
-For example, setting locale to french (by including the locale file
-or calling `moment.locale('fr')`), will allow parsing dates such as
-"15 septembre 2015".
+For example, setting locale to French (by including the locale file or calling
+`moment.locale('fr')`), will allow parsing dates such as "15 septembre 2015".
 
 ## What is this sorcery?
 
-moment provides a `moment.createFromInputFallback` method you can define
-to create additional parsing rules. moment-parseplus implements that
-function and gets invoked when moment fails to parse the given string.
+Moment.js provides a `moment.createFromInputFallback` method you can define to
+create additional parsing rules. `moment-parseplus` implements that function and
+gets invoked when Moment.js fails to parse the given string.
 
-## How do I add my own formats?
+## Sister Packages
 
-parseplus has an `addParser()` function to add a custom parser.
+- Standalone Parser:
+  [any-date-parser](http://npmjs.com/packages/any-date-parser)
+- DayJS: [dayjs-parser](http://npmjs.com/package/dayjs-parser)
+- Luxon: [luxon-parser](http://npmjs.com/package/luxon-parser)
 
-Parsers need to have a `name` and a `matcher`. The `name` allows
-removing the parser later. The `matcher` is a RegExp that finds the
-dates it supports.
+## Unit Testing
 
-There are two different types of parsers. The first is a replacer.
-It provides `replacer` and `format` properties that define how to
-interpret the pattern matches returned by the `matcher`.
+`moment-parseplus` has 100% code coverage.
 
-### Replacer Example
+- To run tests, run `npm test`
+- To check coverage, run `npm run coverage`
 
-```js
-const parseplus = require('moment-parseplus');
-
-parseplus.addParser({
-	name: 'clicks',
-	matcher: /^(\d+) days? into month (\d+) in year (\d{4})$/,
-	replacer: '$1 $2 $3',
-	format: 'DD MM YYYY'
-});
-```
-
-### Handler Examples
-
-A handler is a function that receives the match array and should return
-a date object or a moment object. Two examples are below.
-
-#### Return a date object
-
-```js
-const parseplus = require('moment-parseplus');
-
-parseplus.addParser({
-	name: 'yesteryear',
-	matcher: /^yesteryear$/,
-	handler: function(match) {
-		const date = new Date();
-		return new Date(-1*365*24*60*60*1000 + date);
-	}
-});
-```
-
-#### Return a moment object
-
-```js
-const parseplus = require('moment-parseplus');
-
-parseplus.addParser({
-	name: 'nights',
-	matcher: /^(\d+) nights? ago$/,
-	handler: function(match) {
-		return moment().subtract(match[1] - 0.5, 'days');
-	}
-});
-```
-
-### Removing Parsing Rules
-
-To remove support for a certain parsing rule, use `removeParser()`
-
-```js
-const parseplus = require('moment-parseplus');
-
-parseplus.removeParser('us');
-```
-
-#### Built-in Parser Names
-
-- `12h` 12-hour time
-- `24h` 24-hour time
-- `ago` Time ago such as "5 months ago"
-- `conversational` Named months such as "March 14, 2012"
-- `conversational-yearless` Named months such as "March 14"
-- `in` Time in the future such as "in 4 weeks"
-- `rfc-2822` Date such as "15-Mar-2010", "8 Dec 2011", "Thu, 8 Dec 2011"
-- `rfc-2822-yearless` Date such as "15-Mar", "8 Dec", "Thu, 8 Dec"
-- `plus` Addition and subtraction such as "+5 months" or "-30 seconds"
-- `today` For the strings "now", "today", "tomorrow", "yesterday"
-- `twitter` Date such as "Tue Jun 22 17:47:27 +0000 2010"
-- `us` Date such as "3-15-2010" and "3/15/2010"
-- `us-yearless` Date such as "3-15" and "3/15"
-- `world` Date such as "15.03.2010" and "15/3/2010"
-- `world-yearless` Date such as "15.03" and "15/3"
-
-## Testing
-
-After cloning this repo and running `npm install` you can run unit tests
-on node or in the browser.
-
-### Unit Tests on Node
-
-Powered by mocha
-
-```bash
-npm run test
-```
-
-### Unit Tests in the Browser
-
-Also powered by mocha
-
-```bash
-npm run test-browser
-```
-
-Or open `./test/index.html` in any browser.
-
-## Test Coverage
-
-Use Istanbul to see how much of the code is covered by unit tests
-
-```bash
-npm run coverage
-```
+Unit tests require a global install of `full-icu` and `moment`. The test runner
+will attempt to install these if absent.
 
 ## Contributing
 
-Contributions are welcome. Please open a GitHub ticket for bugs or
-feature requests. Please make a pull request for any fixes or
-new code you'd like to be incorporated.
+Contributions are welcome. Please open a GitHub ticket for bugs or feature
+requests. Please make a pull request for any fixes or new code you'd like to be
+incorporated.
