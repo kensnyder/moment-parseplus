@@ -1,9 +1,9 @@
 # moment-parseplus
 
-[![NPM Link](https://img.shields.io/npm/v/moment-parseplus?v=2.0.2)](https://npm.com/package/moment-parseplus)
-[![Build Status](https://ci.appveyor.com/api/projects/status/github/kensnyder/moment-parseplus?branch=master&svg=true&v=2.0.2)](https://ci.appveyor.com/project/kensnyder/moment-parseplus)
-[![Code Coverage](https://codecov.io/gh/kensnyder/moment-parseplus/branch/master/graph/badge.svg?v=2.0.2)](https://codecov.io/gh/kensnyder/moment-parseplus)
-[![ISC License](https://img.shields.io/npm/l/moment-parseplus.svg?v=2.0.2)](https://opensource.org/licenses/ISC)
+[![NPM Link](https://img.shields.io/npm/v/moment-parseplus?v=2.0.3)](https://npm.com/package/moment-parseplus)
+[![Build Status](https://ci.appveyor.com/api/projects/status/github/kensnyder/moment-parseplus?branch=master&svg=true&v=2.0.3)](https://ci.appveyor.com/project/kensnyder/moment-parseplus)
+[![Code Coverage](https://codecov.io/gh/kensnyder/moment-parseplus/branch/master/graph/badge.svg?v=2.0.3)](https://codecov.io/gh/kensnyder/moment-parseplus)
+[![ISC License](https://img.shields.io/npm/l/moment-parseplus.svg?v=2.0.3)](https://opensource.org/licenses/ISC)
 
 A comprehensive and extensible date parsing plugin for
 [Moment.js](http://momentjs.com). It allows passing a wide variety of date

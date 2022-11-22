@@ -1,12 +1,12 @@
-import moment from 'moment';
+import esMoment from 'moment';
 import parser from 'any-date-parser';
 
 /**
  * Define the function moment uses to fallback to other formats
  * @param {Object} config  The config object with info on the input
  */
-moment.createFromInputFallback = function (config) {
-	const date = Date.fromString(config._i, moment.locale());
+esMoment.createFromInputFallback = function (config) {
+	const date = Date.fromString(config._i, esMoment.locale());
 	if (date instanceof Date) {
 		config._d = date;
 	} else {
@@ -30,7 +30,7 @@ parser.addFormat(
 			const firstLast = match[1].toLowerCase();
 			const lastNext = match[2].toLowerCase();
 			const monthYear = match[3].toLowerCase();
-			const date = moment();
+			const date = esMoment();
 			// move forward or backward one week
 			if (lastNext === 'last') {
 				date.subtract(1, monthYear);
@@ -59,6 +59,6 @@ parser.addFormat(
 );
 
 // for convenience, allow importing moment directly
-parser.moment = moment;
+export const moment = esMoment;
 
 export default parser;
