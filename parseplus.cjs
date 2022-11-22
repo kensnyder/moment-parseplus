@@ -14,6 +14,8 @@ moment.createFromInputFallback = function (config) {
 	}
 };
 
+moment.fn.foobar = () => 'foobar';
+
 /*
  * Add a new parser that handles phrases such as
  * - first day of this month

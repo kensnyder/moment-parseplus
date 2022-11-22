@@ -1,5 +1,9 @@
 ## Change Log
 
+### v2.0.1 on 2022-11-21
+
+- Export as ESModule
+
 ### v2.0.0 on 2022-09-30
 
 - Depend on [any-date-parser](https://www.npmjs.com/package/any-date-parser) for

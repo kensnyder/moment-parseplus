@@ -1,8 +1,12 @@
 {
   "name": "moment-parseplus",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Date parsing plugin for momentjs",
-  "main": "parseplus.js",
+  "type": "module",
+  "exports": {
+    "import": "./parseplus.mjs",
+    "require": "./parseplus.cjs"
+  },
   "directories": {
     "test": "test"
   },
@@ -34,7 +38,25 @@
     "moment": "^2.0.0"
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.20.2",
     "jest": "29.1.2",
     "prettier": "2.7.1"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.mjs$": "babel-jest"
+    },
+    "testMatch": [
+      "**/*.spec.mjs"
+    ]
+  },
+  "babel": {
+    "env": {
+      "test": {
+        "presets": [
+          "@babel/preset-env"
+        ]
+      }
+    }
   }
 }

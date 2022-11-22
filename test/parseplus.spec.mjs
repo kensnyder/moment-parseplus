@@ -1,5 +1,5 @@
-const moment = require('moment');
-require('../parseplus.js');
+import moment from 'moment';
+import '../parseplus.mjs';
 
 describe('first day / last day parser', function () {
 	it('should parse dates times like `first day of this week`', function () {
@@ -40,6 +40,16 @@ describe('first day / last day parser', function () {
 	it('should parse dates times like `first day of the year`', function () {
 		const actual = moment('first day of the year');
 		const expected = moment().startOf('year');
+		expect(actual.format()).toEqual(expected.format());
+	});
+	it('should parse dates times like `today`', function () {
+		const actual = moment('today');
+		const expected = moment().startOf('day');
+		expect(actual.format()).toEqual(expected.format());
+	});
+	it('should parse dates times like `-3 days`', function () {
+		const actual = moment('-3 days').startOf('day');
+		const expected = moment().subtract(3, 'day').startOf('day');
 		expect(actual.format()).toEqual(expected.format());
 	});
 });

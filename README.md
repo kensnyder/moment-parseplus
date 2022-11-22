@@ -1,9 +1,9 @@
 # moment-parseplus
 
-[![NPM Link](https://img.shields.io/npm/v/moment-parseplus?v=2.0.0)](https://npm.com/package/moment-parseplus)
-[![Build Status](https://ci.appveyor.com/api/projects/status/github/kensnyder/moment-parseplus?branch=master&svg=true&v=2.0.0)](https://ci.appveyor.com/project/kensnyder/moment-parseplus)
-[![Code Coverage](https://codecov.io/gh/kensnyder/moment-parseplus/branch/master/graph/badge.svg?v=2.0.0)](https://codecov.io/gh/kensnyder/moment-parseplus)
-[![ISC License](https://img.shields.io/npm/l/moment-parseplus.svg?v=2.0.0)](https://opensource.org/licenses/ISC)
+[![NPM Link](https://img.shields.io/npm/v/moment-parseplus?v=2.0.1)](https://npm.com/package/moment-parseplus)
+[![Build Status](https://ci.appveyor.com/api/projects/status/github/kensnyder/moment-parseplus?branch=master&svg=true&v=2.0.1)](https://ci.appveyor.com/project/kensnyder/moment-parseplus)
+[![Code Coverage](https://codecov.io/gh/kensnyder/moment-parseplus/branch/master/graph/badge.svg?v=2.0.1)](https://codecov.io/gh/kensnyder/moment-parseplus)
+[![ISC License](https://img.shields.io/npm/l/moment-parseplus.svg?v=2.0.1)](https://opensource.org/licenses/ISC)
 
 A comprehensive and extensible date parsing plugin for
 [Moment.js](http://momentjs.com). It allows passing a wide variety of date
@@ -42,18 +42,18 @@ npm install moment-parseplus
 ## Usage
 
 ```js
-const moment = require('moment');
-require('moment-parseplus');
+import { moment } from 'moment-parseplus';
 
 const date1 = moment('March 5th, 2016 at 7:05pm');
 const date2 = moment('9 days ago');
 const date3 = moment('2016-03-05 23:59:59 CST');
 ```
 
-Or, for convenience, you can just import `moment` from `moment-parseplus`:
+Or you can explicitly import `moment` separately from `moment-parseplus`:
 
 ```js
-import { moment } from 'moment-parseplus';
+import moment from 'moment';
+import 'moment-parseplus';
 
 const date1 = moment('March 5th, 2016 at 7:05pm');
 ```
