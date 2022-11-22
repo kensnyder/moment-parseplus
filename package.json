@@ -1,8 +1,9 @@
 {
   "name": "moment-parseplus",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Date parsing plugin for momentjs",
   "type": "module",
+  "main": "parseplus.mjs",
   "exports": {
     "import": "./parseplus.mjs",
     "require": "./parseplus.cjs"

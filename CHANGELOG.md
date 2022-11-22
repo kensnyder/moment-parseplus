@@ -1,6 +1,6 @@
 ## Change Log
 
-### v2.0.1 on 2022-11-21
+### v2.0.2 on 2022-11-21
 
 - Export as ESModule
 
